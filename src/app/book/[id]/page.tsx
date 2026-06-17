@@ -1,35 +1,47 @@
+"use client";
+
 import Sidebar from "@/app/components/Sidebar";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { HiOutlineSearch } from "react-icons/hi";
+import { BsBookmark } from "react-icons/bs";
 
-export default async function BookPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default function BookPage() {
+  const [book, setBook] = useState<any>(null);
+  const params = useParams();
+  const id = params.id;
 
-  const { id } = await params;
+ useEffect(() => {
+  const fetchData = async () => {
+    const response = await fetch(
+      `https://us-central1-summaristt.cloudfunctions.net/getBook?id=${id}`
+    );
 
-  console.log("id:", id);
+    console.log("status:", response.status);
+    console.log("ok:", response.ok);
 
-  const response = await fetch(
-    `https://us-central1-summaristt.cloudfunctions.net/getBook?id=${id}`
-  );
+    const text = await response.text();
+    console.log("text:", text);
 
-  const text = await response.text();
+    if (!text) {
+      console.log("API returned empty response");
+      return;
+    }
 
-console.log("status:", response.status);
-console.log("text:", text);
+    const data = JSON.parse(text);
+    setBook(data);
+  };
 
-if (!text) {
-  throw new Error("API returned empty text");
-}
+  fetchData();
+}, [id]);
 
-const book = JSON.parse(text);
+  if (!book) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="book">
       <Sidebar />
-
       <main className="book__content">
         <div className="book__nav">
           <div className="book__search">
@@ -45,7 +57,9 @@ const book = JSON.parse(text);
             <h2>{book.subTitle}</h2>
 
             <div className="book__stats">
-              <div>⭐ {book.averageRating} ({book.totalRating} ratings)</div>
+              <div>
+                ⭐ {book.averageRating} ({book.totalRating} ratings)
+              </div>
               <div>⏱ {book.audioLength}</div>
               <div>🎙 Audio & Text</div>
               <div>💡 {book.keyIdeas} Key ideas</div>
@@ -56,7 +70,9 @@ const book = JSON.parse(text);
               <button>Listen</button>
             </div>
 
-            <p className="book__library">🔖 Add title to My Library</p>
+            <p className="book__library">
+                <BsBookmark /> Add title to My Library
+                </p>
           </div>
 
           <figure className="book__image--wrapper">
