@@ -13,17 +13,14 @@ export default function BookPage() {
 
  useEffect(() => {
   const fetchData = async () => {
-    console.log("id:", id);
 
     const response = await fetch(
       `https://us-central1-summaristt.cloudfunctions.net/getBook?id=2l0idxm1rvw`
     );
 
     const text = await response.text();
-    console.log("text:", text);
 
     if (!text) {
-      console.log("API returned empty response");
       return;
     }
 
