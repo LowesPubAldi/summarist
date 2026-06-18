@@ -11,6 +11,9 @@ import Link from "next/link";
 export default function Sidebar () {
     return (
         <aside className="sidebar">
+          <div className="sidebar__logo">
+            <img src="logo.png" alt="Summarist"/>
+          </div>
           <ul className="sidebar__menu">
             <li>
               <Link href="/for-you">
