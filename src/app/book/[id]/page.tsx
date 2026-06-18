@@ -1,9 +1,9 @@
 "use client";
 
 import Sidebar from "@/app/components/Sidebar";
+import Searchbar from "@/app/components/Searchbar";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { HiOutlineSearch } from "react-icons/hi";
 import { BsBookmark } from "react-icons/bs";
 
 export default function BookPage() {
@@ -13,12 +13,11 @@ export default function BookPage() {
 
  useEffect(() => {
   const fetchData = async () => {
-    const response = await fetch(
-      `https://us-central1-summaristt.cloudfunctions.net/getBook?id=${id}`
-    );
+    console.log("id:", id);
 
-    console.log("status:", response.status);
-    console.log("ok:", response.ok);
+    const response = await fetch(
+      `https://us-central1-summaristt.cloudfunctions.net/getBook?id=2l0idxm1rvw`
+    );
 
     const text = await response.text();
     console.log("text:", text);
@@ -43,13 +42,7 @@ export default function BookPage() {
     <div className="book">
       <Sidebar />
       <main className="book__content">
-        <div className="book__nav">
-          <div className="book__search">
-            <input type="text" placeholder="Search for books" />
-            <HiOutlineSearch />
-          </div>
-        </div>
-
+        <Searchbar />
         <section className="book__hero">
           <div className="book__details">
             <h1>{book.title}</h1>

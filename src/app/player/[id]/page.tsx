@@ -4,7 +4,6 @@ import {
   HiOutlineHome,
   HiOutlineBookmark,
   HiOutlinePencil,
-  HiOutlineSearch,
   HiOutlineCog,
   HiOutlineQuestionMarkCircle,
 } from "react-icons/hi";
@@ -12,6 +11,7 @@ import {
 import { useState } from "react";
 import Modal from "../../components/Modal";
 import Sidebar from "@/app/components/Sidebar";
+import Searchbar from "@/app/components/Searchbar";
 
 export default function PlayerPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,15 +20,7 @@ export default function PlayerPage() {
     <div className="player">
       <Sidebar/>
       <main className="player__content">
-        <div className="player__nav">
-          <div className="player__search">
-          <input
-            type="text"
-            placeholder="Search for books"
-          />
-          <HiOutlineSearch />
-        </div>
-        </div>
+        <Searchbar />
 
 <div className="player__title">
   <h1>How to Win Friends and Influence People in the Digital Age</h1>
