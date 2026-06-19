@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { FaUser } from "react-icons/fa";
 
 type ModalProps = {
   isOpen: boolean;
@@ -40,9 +41,9 @@ export default function Modal({ isOpen, onClose }: ModalProps) {
     <div className="modal__backdrop">
       <div className="modal">
         <button
+          type="button"
           className="modal__close"
-          onClick={onClose}
-        >
+          onClick={onClose}>
           ×
         </button>
 
@@ -52,6 +53,9 @@ export default function Modal({ isOpen, onClose }: ModalProps) {
         className="modal__guest"
         onClick={handleGuestLogin}
         >
+          <span className="modal__guest-icon">
+          <FaUser />
+          </span>
             Login as a Guest
             </button>
 
@@ -61,10 +65,16 @@ export default function Modal({ isOpen, onClose }: ModalProps) {
         <span></span>
     </div>
 
-        <button
+      <button
             className="modal__google"
             onClick={() => alert("Google Login")}
-            >
+        >
+          <img
+            src="/google.png"
+            alt="Google"
+            className="modal__google-icon"
+            />
+
          Login with Google
     </button>
 

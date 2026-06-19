@@ -5,14 +5,22 @@ import {
   HiOutlineSearch,
   HiOutlineCog,
   HiOutlineQuestionMarkCircle,
+  HiOutlineLogin,
 } from "react-icons/hi";
 import Link from "next/link";
 
-export default function Sidebar () {
+type SidebarProps = {
+  showFontControls?: boolean;
+};
+
+export default function Sidebar({
+  showFontControls = false,
+}: SidebarProps) {
+
     return (
         <aside className="sidebar">
           <div className="sidebar__logo">
-            <img src="logo.png" alt="Summarist"/>
+            <img src="/logo.png" alt="Summarist"/>
           </div>
           <ul className="sidebar__menu">
             <li>
@@ -40,12 +48,11 @@ export default function Sidebar () {
             </li>
           </ul>
         
-        <div className="sidebar__font-size">
-          <button className="sidebar__font sidebar__font--active">Aa</button>
-          <button className="sidebar__font">Aa</button>
-          <button className="sidebar__font">Aa</button>
-          <button className="sidebar__font">Aa</button>
-        </div>
+        {showFontControls && (
+          <div className="sidebar__font-size">
+            ...
+          </div>
+)}
         
         <ul className="sidebar__menu">
           <li>
@@ -59,7 +66,11 @@ export default function Sidebar () {
             <HiOutlineQuestionMarkCircle />
           <span>Help & Support</span>
           </li>
+          <li>
+            <HiOutlineLogin />
+            <span>Login</span>
+            </li>
           </ul>
-              </aside>
+        </aside>
     );
 }

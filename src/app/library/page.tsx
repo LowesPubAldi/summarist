@@ -4,11 +4,10 @@ import { useState } from "react";
 import Sidebar from "@/app/components/Sidebar";
 import Searchbar from "@/app/components/Searchbar";
 import Modal from "@/app/components/Modal";
-import { HiOutlineSearch } from "react-icons/hi";
 
 export default function LibraryPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const isLoggedIn = true;
+  const isLoggedIn = false;
 
   return (
     <div className="library">
@@ -41,6 +40,10 @@ export default function LibraryPage() {
         <button onClick={() => setIsModalOpen(true)}>
         Login
       </button>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        />
     </div>
   )}
 </section>

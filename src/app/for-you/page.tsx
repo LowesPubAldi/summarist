@@ -76,15 +76,19 @@ export default function ForYouPage() {
           <p>We think you&apos;ll like these</p>
 
           <div className="for-you__books">
-            {recommendedBooks.map((book) => (
+            {recommendedBooks.slice(0, 5).map((book) => (
               <div className="for-you__book" key={book.id}>
                 {book.subscriptionRequired && (
                   <span className="book-pill">Premium</span>
                 )}
-
                 <img src={book.imageLink} alt={book.title} />
                 <h3>{book.title}</h3>
                 <p>{book.author}</p>
+                <p>{book.subTitle}</p>
+              <div className="selected-book__time">
+                {/* <span>⏱ {book.duration || "03:24"}</span> */}
+                <span>☆ {book.rating || "4.4"}</span>
+              </div>
               </div>
             ))}
           </div>
@@ -94,7 +98,7 @@ export default function ForYouPage() {
           <h2>Suggested Books</h2>
 
           <div className="for-you__books">
-            {suggestedBooks.map((book) => (
+            {suggestedBooks.slice(0, 5).map((book) => (
               <div className="for-you__book" key={book.id}>
                 {book.subscriptionRequired && (
                   <span className="book-pill">Premium</span>
@@ -103,6 +107,11 @@ export default function ForYouPage() {
                 <img src={book.imageLink} alt={book.title} />
                 <h3>{book.title}</h3>
                 <p>{book.author}</p>
+                <p>{book.subTitle}</p>
+                <div className="selected-book__time">
+                  {/* <span>⏱ {book.duration || "03:24"}</span> */}
+                  <span>☆ {book.rating || "4.4"}</span>
+                </div>
               </div>
             ))}
           </div>

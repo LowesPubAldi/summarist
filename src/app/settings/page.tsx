@@ -10,7 +10,7 @@ export default function SettingsPage() {
 
   return (
     <div className="settings">
-      <Sidebar />
+      <Sidebar showFontControls />
 
       <main className="settings__content">
         <Searchbar />

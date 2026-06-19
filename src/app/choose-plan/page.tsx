@@ -36,7 +36,7 @@ export default function ChoosePlanPage() {
         <h1>Get unlimited access to many amazing books to read</h1>
         <p>Turn ordinary moments into amazing learning opportunities</p>
 
-        <img src="/login.png" alt="" />
+        <img src="/pricing-top.png" alt="" />
       </section>
 
       <section className="plan__features">
@@ -79,10 +79,15 @@ export default function ChoosePlanPage() {
           </div>
         </div>
 
-        <button>Start your free 7-day trial</button>
+        <div className="plan__trial-wrapper">
+        <button className="plan__trial-btn">
+          Start your free 7-day trial
+          </button>
+
         <p className="plan__small">
           Cancel your trial at any time before it ends, and you won't be charged.
         </p>
+        </div>
       </section>
        <section className="faq">
         {faqs.map((faq, index) => (

@@ -20,8 +20,8 @@ export default function Searchbar() {
   }, [debouncedSearch]);
 
   return (
-    <div className="player__nav">
-      <div className="player__search">
+    <div className="searchbar__nav">
+      <div className="searchbar__search">
         <input
           type="text"
           placeholder="Search for books"

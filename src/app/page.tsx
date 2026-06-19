@@ -7,15 +7,44 @@ import {
 } from "react-icons/ai";
 
 import { BiCrown } from "react-icons/bi";
-import { BsStarHalf } from "react-icons/bs";
 import { RiLeafLine } from "react-icons/ri";
-import { AiFillStar, AiOutlineStar } from "react-icons/ai";
-import { useState } from "react";
+import { FaStar, FaStarHalfAlt } from "react-icons/fa";
+import { useEffect, useState } from "react";
 import Modal from "./components/Modal";
 
 
 export default function Home () {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+useEffect(() => {
+  const interval = setInterval(() => {
+    setActiveIndex((prevIndex) =>
+      prevIndex === firstStats.length - 1 ? 0 : prevIndex + 1
+    );
+  }, 2000);
+
+  return () => clearInterval(interval);
+}, []);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const firstStats = [
+  "Enhance your knowledge",
+  "Achieve greater success",
+  "Improve your health",
+  "Develop better parenting skills",
+  "Increase happiness",
+  "Be the best version of yourself!",
+];
+
+const secondStats = [
+  "Expand your learning",
+  "Accomplish your goals",
+  "Strengthen your vitality",
+  "Become a better caregiver",
+  "Improve your mood",
+  "Maximize your abilities",
+];
+
   return (
     <div>
         <nav className="nav">
@@ -101,26 +130,26 @@ export default function Home () {
               <div className="features__sub--title">
                 Gain valuable insights from briefcasts
               </div>
+              </div>
             </div>
           </div>
           <div className="statistics__wrapper">
             <div className="statistics__content--header">
-              <div className="statistics__heading">Enhance your knowledge</div>
-              <div className="statistics__heading">Achieve greater success</div>
-              <div className="statistics__heading">Improve your health</div>
-              <div className="statistics__heading">
-                Develop better parenting skills
-              </div>
-              <div className="statistics__heading">Increase happiness</div>
-              <div className="statistics__heading">
-                Be the best version of yourself!
-              </div>
-            </div>
+              {firstStats.map((stat, index) => (
+            <div
+          key={stat}
+          className={`statistics__heading ${
+          index === activeIndex ? "statistics__heading--active" : ""
+          }`}
+          >
+            {stat}
+          </div>
+          ))}
+          </div>
             <div className="statistics__content--details">
               <div className="statistics__data">
                 <div className="statistics__data--number">93%</div>
-                <div className="statistics__data--title">
-                  of Summarist members <b>significantly increase</b> reading
+                <div className="statistics__data--title">of Summarist members <b>significantly increase</b> reading
                   frequency.
                 </div>
               </div>
@@ -164,17 +193,18 @@ export default function Home () {
                 </div>
               </div>
             </div>
-            <div
-              className="statistics__content--header statistics__content--header-second"
-            >
-              <div className="statistics__heading">Expand your learning</div>
-              <div className="statistics__heading">Accomplish your goals</div>
-              <div className="statistics__heading">Strengthen your vitality</div>
-              <div className="statistics__heading">Become a better caregiver</div>
-              <div className="statistics__heading">Improve your mood</div>
-              <div className="statistics__heading">Maximize your abilities</div>
-            </div>
-          </div>
+              <div className="statistics__content--header statistics__content--header-second">
+      {secondStats.map((stat, index) => (
+      <div
+        key={stat}
+        className={`statistics__heading ${
+        index === activeIndex ? "statistics__heading--active" : ""
+        }`}
+      >
+      {stat}
+      </div>
+      ))}
+      </div>
         </div>
       </div>
     </section>
@@ -187,11 +217,9 @@ export default function Home () {
               <div className="review__header">
                 <div className="review__name">Hanna M.</div>
                 <div className="review__stars">
-                  <span className="review__star">★</span>
-                  <span className="review__star">★</span>
-                  <span className="review__star">★</span>
-                  <span className="review__star">★</span>
-                  <span className="review__star">★</span>
+                    {[...Array(5)].map((_, index) => (
+                    <FaStar key={index} />
+                    ))}
                 </div>
               </div>
               <div className="review__body">
@@ -204,11 +232,9 @@ export default function Home () {
               <div className="review__header">
                 <div className="review__name">David B.</div>
                 <div className="review__stars">
-                  <AiFillStar />
-                  <AiFillStar />
-                  <AiFillStar />
-                  <AiFillStar />
-                  <AiFillStar />
+                    {[...Array(5)].map((_, index) => (
+                    <FaStar key={index} />
+                    ))}
                 </div>
               </div>
               <div className="review__body">
@@ -221,11 +247,9 @@ export default function Home () {
               <div className="review__header">
                 <div className="review__name">Nathan S.</div>
                 <div className="review__stars">
-                  <AiFillStar />
-                  <AiFillStar />
-                  <AiFillStar />
-                  <AiFillStar />
-                  <AiFillStar />
+                    {[...Array(5)].map((_, index) => (
+                    <FaStar key={index} />
+                    ))}
                 </div>
               </div>
               <div className="review__body">
@@ -239,11 +263,9 @@ export default function Home () {
               <div className="review__header">
                 <div className="review__name">Ryan R.</div>
                 <div className="review__stars">
-                  <AiFillStar />
-                  <AiFillStar />
-                  <AiFillStar />
-                  <AiFillStar />
-                  <AiFillStar />
+                    {[...Array(5)].map((_, index) => (
+                    <FaStar key={index} />
+                    ))}
                 </div>
               </div>
               <div className="review__body">
@@ -279,11 +301,11 @@ export default function Home () {
             </div>
             <div className="numbers">
               <div className="numbers__icon numbers__star--icon">
-                  <AiFillStar />
-                  <AiFillStar />
-                  <AiFillStar />
-                  <AiFillStar />
-                  <AiOutlineStar />
+                  <FaStar />
+                  <FaStar />
+                  <FaStar />
+                  <FaStar />
+                  <FaStarHalfAlt />
               </div>
               <div className="numbers__title">4.5 Stars</div>
               <div className="numbers__sub--title">

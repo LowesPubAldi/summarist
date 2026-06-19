@@ -5,6 +5,8 @@ import Searchbar from "@/app/components/Searchbar";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BsBookmark } from "react-icons/bs";
+import { HiOutlineBookOpen } from "react-icons/hi";
+import { HiOutlinePlay } from "react-icons/hi";
 
 export default function BookPage() {
   const [book, setBook] = useState<any>(null);
@@ -25,6 +27,7 @@ export default function BookPage() {
     }
 
     const data = JSON.parse(text);
+
     setBook(data);
   };
 
@@ -50,14 +53,20 @@ export default function BookPage() {
               <div>
                 ⭐ {book.averageRating} ({book.totalRating} ratings)
               </div>
-              <div>⏱ {book.audioLength}</div>
+              <div>⏱ {book.totalDuration || "4:52"}</div>
               <div>🎙 Audio & Text</div>
               <div>💡 {book.keyIdeas} Key ideas</div>
             </div>
 
             <div className="book__buttons">
-              <button>Read</button>
-              <button>Listen</button>
+              <button>
+                <HiOutlineBookOpen />
+                Read
+                </button>
+              <button>
+                <HiOutlinePlay />
+                Listen
+                </button>
             </div>
 
             <p className="book__library">
