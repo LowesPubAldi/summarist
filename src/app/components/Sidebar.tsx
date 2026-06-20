@@ -51,9 +51,7 @@ export default function Sidebar({
       </ul>
 
       {showFontControls && (
-        <div className="sidebar__font-size">
-          ...
-        </div>
+        <div className="sidebar__font-size"></div>
       )}
 
       <ul className="sidebar__menu">

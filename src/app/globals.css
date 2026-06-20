@@ -1127,12 +1127,23 @@ button:disabled {
 .settings {
   display: flex;
   min-height: 100vh;
+  background: #f7faf9;
 }
 
 .settings__content {
   flex: 1;
-  margin-left: 200px;
-  padding: 32px 56px;
+  padding: 48px 64px;
+}
+
+.settings__account {
+  max-width: 700px;
+}
+
+.settings__content h1 {
+  font-size: 32px;
+  margin-bottom: 48px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 24px;
 }
 
 .settings__nav {
@@ -1192,6 +1203,45 @@ button:disabled {
   border-radius: 4px;
   font-weight: 600;
   cursor: pointer;
+}
+
+.settings__section {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 32px 0;
+}
+
+.settings__section h3 {
+  font-size: 18px;
+  margin-bottom: 12px;
+  color: #032b41;
+}
+
+.settings__section p {
+  font-size: 16px;
+  color: #394547;
+}
+
+.settings__button {
+  background: #2bd97c;
+  color: blue;
+  border-radius: 4px;
+  padding: 12px 24px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.settings__logged-out {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+}
+
+.settings__logged-out img {
+  width: 240px;
+  margin-bottom: 24px;
 }
 
 /* SALES PAGE */
@@ -1332,7 +1382,7 @@ button:disabled {
 }
 
 .faq {
-  max-width: 900px;
+  max-width: 1020px;
   margin: 40px auto 48px;
   padding: 0 24px;
 }
@@ -1342,6 +1392,11 @@ button:disabled {
   padding: 24px 0;
 }
 
+.faq__question span {
+  display: flex;
+  transition: transform 250ms ease;
+}
+
 .faq__question {
   width: 100%;
   background: none;
@@ -1349,19 +1404,31 @@ button:disabled {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 600;
   cursor: pointer;
   text-align: left;
 }
 
+.faq__answer-wrapper {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 350ms ease, opacity 350ms ease;
+  opacity: 0;
+}
+
+.faq__answer-wrapper--open {
+  max-height: 220px;
+  opacity: 1;
+}
+
 .faq__answer {
   margin-top: 16px;
-  font-size: 18px;
+  font-size: 20px;
   line-height: 1.5;
   color: #394547;
   overflow: hidden;
-  animation: faqOpen 250ms ease;
+  animation: faqOpen 400ms ease;
 }
 
 @keyframes faqOpen {

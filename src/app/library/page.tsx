@@ -1,53 +1,80 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import Sidebar from "@/app/components/Sidebar";
 import Searchbar from "@/app/components/Searchbar";
 import Modal from "@/app/components/Modal";
 
 export default function LibraryPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const isLoggedIn = false;
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [savedBooks, setSavedBooks] = useState<any[]>([]);
+
+  useEffect(() => {
+    const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+    setIsLoggedIn(loggedIn);
+
+    const books = JSON.parse(localStorage.getItem("savedBooks") || "[]");
+    setSavedBooks(books);
+  }, []);
 
   return (
     <div className="library">
-      <Sidebar />
+      <Sidebar onLoginClick={() => setIsModalOpen(true)} />
 
       <main className="library__content">
         <Searchbar />
-    <section className="library__main">
-  {isLoggedIn ? (
-    <div className="libary__books">
-        <section>
-            <h2>Saved Books</h2>
-            <p>0 items</p>
 
-    <div className="library__empty">
-        <h3>Save your favorite books!</h3>
-            <p>When you save a book, it will appear here.</p>
-        </div>
-    </section>
+        <section className="library__main">
+          {isLoggedIn ? (
+            <div className="library__books">
+              <section>
+                <h2>Saved Books</h2>
+                <p>{savedBooks.length} items</p>
 
-        <section>
-      <h2>Finished</h2>
-      <p>18 items</p>
+                {savedBooks.length > 0 ? (
+                  <div className="library__saved-books">
+                    {savedBooks.map((book) => (
+                      <Link
+                        href={`/book/${book.id}`}
+                        className="library__book"
+                        key={book.id}
+                      >
+                        <img src={book.imageLink} alt={book.title} />
+
+                        <div>
+                          <h3>{book.title}</h3>
+                          <p>{book.author}</p>
+                          <p>{book.subTitle}</p>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="library__empty">
+                    <h3>Save your favorite books!</h3>
+                    <p>When you save a book, it will appear here.</p>
+                  </div>
+                )}
+              </section>
+
+              <section>
+                <h2>Finished</h2>
+                <p>0 items</p>
+              </section>
+            </div>
+          ) : (
+            <div className="library__card">
+              <img src="/login.png" alt="" />
+              <h2>Log in to your account to see your library.</h2>
+              <button onClick={() => setIsModalOpen(true)}>Login</button>
+            </div>
+          )}
         </section>
+      </main>
+
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
-  ) : (
-    <div className="library__card">
-      <img src="/login.png" alt="" />
-        <h2>Log in to your account to see your library.</h2>
-        <button onClick={() => setIsModalOpen(true)}>
-        Login
-      </button>
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        />
-    </div>
-  )}
-</section>
-</main>
-</div>
   );
 }

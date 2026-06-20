@@ -12,16 +12,16 @@ export default function BookPage() {
   const [book, setBook] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-      useEffect(() => {
-        const loggedIn = localStorage.getItem("isLoggedIn") === "true";
-        setIsLoggedIn(loggedIn);
-      }, []);
   const [isSaved, setIsSaved] = useState(false);
 
   const params = useParams();
   const router = useRouter();
   const id = params.id;
+
+  useEffect(() => {
+    const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+    setIsLoggedIn(loggedIn);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,27 +37,35 @@ export default function BookPage() {
 
       const data = JSON.parse(text);
       setBook(data);
+
+      const savedBooks = JSON.parse(localStorage.getItem("savedBooks") || "[]");
+      const bookAlreadySaved = savedBooks.some(
+        (savedBook: any) => savedBook.id === data.id
+      );
+
+      setIsSaved(bookAlreadySaved);
     };
 
     fetchData();
   }, [id]);
 
-const handleReadClick = () => {
-  if (!isLoggedIn) {
-    setIsModalOpen(true);
-    return;
-  }
-  router.push(`/book/${id}`);
-};
+  const handleReadClick = () => {
+    if (!isLoggedIn) {
+      setIsModalOpen(true);
+      return;
+    }
 
-const handleListenClick = () => {
-  if (!isLoggedIn) {
-    setIsModalOpen(true);
-    return;
-  }
+    router.push(`/book/${id}`);
+  };
 
-  router.push(`/player/${id}`);
-};
+  const handleListenClick = () => {
+    if (!isLoggedIn) {
+      setIsModalOpen(true);
+      return;
+    }
+
+    router.push(`/player/${id}`);
+  };
 
   const handleLibraryClick = () => {
     if (!isLoggedIn) {
@@ -65,12 +73,25 @@ const handleListenClick = () => {
       return;
     }
 
-    setIsSaved(!isSaved);
-  };
+    const savedBooks = JSON.parse(localStorage.getItem("savedBooks") || "[]");
 
-  const handleGuestLogin = () => {
-    setIsLoggedIn(true);
-    setIsModalOpen(false);
+    const bookAlreadySaved = savedBooks.some(
+      (savedBook: any) => savedBook.id === book.id
+    );
+
+    if (bookAlreadySaved) {
+      const updatedBooks = savedBooks.filter(
+        (savedBook: any) => savedBook.id !== book.id
+      );
+
+      localStorage.setItem("savedBooks", JSON.stringify(updatedBooks));
+      setIsSaved(false);
+    } else {
+      const updatedBooks = [...savedBooks, book];
+
+      localStorage.setItem("savedBooks", JSON.stringify(updatedBooks));
+      setIsSaved(true);
+    }
   };
 
   if (!book) {
@@ -138,10 +159,7 @@ const handleListenClick = () => {
         </section>
       </main>
 
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 }

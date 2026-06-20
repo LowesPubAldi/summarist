@@ -1,36 +1,65 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "@/app/components/Sidebar";
 import Searchbar from "@/app/components/Searchbar";
 import Modal from "@/app/components/Modal";
 
 export default function SettingsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isPremium, setIsPremium] = useState(false);
+
+  useEffect(() => {
+    const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+    setIsLoggedIn(loggedIn);
+  }, []);
 
   return (
     <div className="settings">
-      <Sidebar showFontControls />
+      <Sidebar showFontControls onLoginClick={() => setIsModalOpen(true)} />
 
       <main className="settings__content">
         <Searchbar />
-        <section className="settings__main">
-          <h1>Settings</h1>
 
-          <div className="settings__card">
-            <img src="/login.png" alt="" />
+        <h1>Settings</h1>
 
-            <h2>Log in to your account to see your details.</h2>
+        {isLoggedIn ? (
+          <div className="settings__account">
+            <div className="settings__section">
+              <h3>Your Subscription plan</h3>
+              <p>{isPremium ? "Premium" : "Basic"}</p>
 
-            <button onClick={() => setIsModalOpen(true)}>Login</button>
+              {!isPremium && (
+                <button
+                  className="settings__button"
+                  onClick={() => setIsPremium(true)}
+                >
+                  Upgrade to Premium
+                </button>
+              )}
+            </div>
+
+            <div className="settings__section">
+              <h3>Email</h3>
+              <p>guest@gmail.com</p>
+            </div>
           </div>
-        </section>
+        ) : (
+          <div className="settings__logged-out">
+            <img src="/login.png" alt="" />
+            <h2>Log in to your account to see your details.</h2>
+            <button
+              className="settings__button"
+              onClick={() => setIsModalOpen(true)}
+            >
+              Login
+            </button>
+          </div>
+        )}
       </main>
 
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 }

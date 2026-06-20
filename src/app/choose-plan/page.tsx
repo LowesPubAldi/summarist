@@ -29,6 +29,7 @@ const faqs = [
 
 export default function ChoosePlanPage() {
     const [openFaq, setOpenFaq] = useState(0);
+    const [selectedPlan, setSelectedPlan] = useState("yearly");
 
   return (
     <main className="plan">
@@ -59,7 +60,12 @@ export default function ChoosePlanPage() {
       <section className="plan__choose">
         <h2>Choose the plan that fits you</h2>
 
-        <div className="plan__card plan__card--active">
+        <div
+          className={`plan__card ${
+          selectedPlan === "yearly" ? "plan__card--active" : ""
+          }`}
+          onClick={() => setSelectedPlan("yearly")}
+          >
           <span>○</span>
           <div>
             <h3>Premium Plus Yearly</h3>
@@ -70,7 +76,12 @@ export default function ChoosePlanPage() {
 
         <div className="plan__divider">or</div>
 
-        <div className="plan__card">
+        <div
+          className={`plan__card ${
+          selectedPlan === "monthly" ? "plan__card--active" : ""
+          }`}
+          onClick={() => setSelectedPlan("monthly")}
+          >
           <span>○</span>
           <div>
             <h3>Premium Monthly</h3>
@@ -80,7 +91,10 @@ export default function ChoosePlanPage() {
         </div>
 
         <div className="plan__trial-wrapper">
-        <button className="plan__trial-btn">
+        <button
+            className="plan__trial-btn"
+            onClick={() => alert(`Selected plan: ${selectedPlan}`)}
+            >
           Start your free 7-day trial
           </button>
 
@@ -107,11 +121,13 @@ export default function ChoosePlanPage() {
         </span>
             </button>
 
-            {openFaq === index && (
-              <p className="faq__answer">
-          {faq.answer}
-        </p>
-            )}
+        <div
+          className={`faq__answer-wrapper ${
+          openFaq === index ? "faq__answer-wrapper--open" : ""
+          }`}
+          >
+          <p className="faq__answer">{faq.answer}</p>
+        </div>
           </div>
         ))}
         </section>
