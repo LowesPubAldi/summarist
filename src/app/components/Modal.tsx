@@ -9,7 +9,10 @@ type ModalProps = {
   onClose: () => void;
 };
 
-export default function Modal({ isOpen, onClose }: ModalProps) {
+export default function Modal({
+  isOpen,
+  onClose,
+}: ModalProps) {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -19,11 +22,9 @@ export default function Modal({ isOpen, onClose }: ModalProps) {
   if (!isOpen) return null;
 
   const handleLogin = () => {
-    if (
-      email === "guest@gmail.com" &&
-      password === "guest123"
-    ) {
+    if (email === "guest@gmail.com" && password === "guest123") {
       setError("");
+      localStorage.setItem("isLoggedIn", "true");
       onClose();
       router.push("/for-you");
     } else {
@@ -32,56 +33,48 @@ export default function Modal({ isOpen, onClose }: ModalProps) {
   };
 
   const handleGuestLogin = () => {
+    setError("");
+    localStorage.setItem("isLoggedIn", "true");
     onClose();
     router.push("/for-you");
-  };
+};
 
   return (
-    
     <div className="modal__backdrop">
       <div className="modal">
-        <button
-          type="button"
-          className="modal__close"
-          onClick={onClose}>
+        <button type="button" className="modal__close" onClick={onClose}>
           ×
         </button>
 
         <h2>Log in to Summarist</h2>
 
-        <button 
-        className="modal__guest"
-        onClick={handleGuestLogin}
-        >
+        <button className="modal__guest" onClick={handleGuestLogin}>
           <span className="modal__guest-icon">
-          <FaUser />
+            <FaUser />
           </span>
-            Login as a Guest
-            </button>
+          Login as a Guest
+        </button>
 
-    <div className="modal__divider">
-        <span></span>
-        <p>or</p>
-        <span></span>
-    </div>
+        <div className="modal__divider">
+          <span></span>
+          <p>or</p>
+          <span></span>
+        </div>
 
-      <button
-            className="modal__google"
-            onClick={() => alert("Google Login")}
+        <button
+          className="modal__google"
+          onClick={() =>
+            setError("Google login is not available in this demo")
+          }
         >
-          <img
-            src="/google.png"
-            alt="Google"
-            className="modal__google-icon"
-            />
+          <img src="/google.png" alt="Google" className="modal__google-icon" />
+          Login with Google
+        </button>
 
-         Login with Google
-    </button>
-
-    <div className="modal__divider">
-        <span></span>
-        <p>or</p>
-        <span></span>
+        <div className="modal__divider">
+          <span></span>
+          <p>or</p>
+          <span></span>
         </div>
 
         <input
@@ -98,30 +91,28 @@ export default function Modal({ isOpen, onClose }: ModalProps) {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        {error && (
-          <p className="modal__error">
-            {error}
-          </p>
-        )}
+        {error && <p className="modal__error">{error}</p>}
 
-        <button
-          className="modal__login"
-          onClick={handleLogin}
-        >
+        <button className="modal__login" onClick={handleLogin}>
           Login
         </button>
-    <p
-        className="modal__forgot"
-        onClick={() => alert("Forgot password clicked")}
+
+        <p
+          className="modal__forgot"
+          onClick={() =>
+            setError("Password reset is not available in this demo")
+          }
         >
-        Forgot your password?
+          Forgot your password?
         </p>
 
-    <p
-        className="modal__register"
-        onClick={() => alert("Create account clicked")}
+        <p
+          className="modal__register"
+          onClick={() =>
+            setError("Account creation is not available in this demo")
+          }
         >
-        Don't have an account?
+          Don&apos;t have an account?
         </p>
       </div>
     </div>

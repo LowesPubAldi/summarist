@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Sidebar from "@/app/components/Sidebar";
 import Searchbar from "@/app/components/Searchbar";
+import Link from "next/link";
 
 export default function ForYouPage() {
   const [selectedBook, setSelectedBook] = useState<any>(null);
@@ -15,7 +16,6 @@ export default function ForYouPage() {
         "https://us-central1-summaristt.cloudfunctions.net/getBooks?status=selected"
       );
       const data = await response.json();
-
       setSelectedBook(data[0]);
     }
 
@@ -24,7 +24,6 @@ export default function ForYouPage() {
         "https://us-central1-summaristt.cloudfunctions.net/getBooks?status=recommended"
       );
       const data = await response.json();
-
       setRecommendedBooks(data);
     }
 
@@ -33,7 +32,6 @@ export default function ForYouPage() {
         "https://us-central1-summaristt.cloudfunctions.net/getBooks?status=suggested"
       );
       const data = await response.json();
-
       setSuggestedBooks(data);
     }
 
@@ -77,19 +75,20 @@ export default function ForYouPage() {
 
           <div className="for-you__books">
             {recommendedBooks.slice(0, 5).map((book) => (
-              <div className="for-you__book" key={book.id}>
+              <Link href={`/book/${book.id}`} className="for-you__book" key={book.id}>
                 {book.subscriptionRequired && (
                   <span className="book-pill">Premium</span>
                 )}
+
                 <img src={book.imageLink} alt={book.title} />
                 <h3>{book.title}</h3>
                 <p>{book.author}</p>
                 <p>{book.subTitle}</p>
-              <div className="selected-book__time">
-                {/* <span>⏱ {book.duration || "03:24"}</span> */}
-                <span>☆ {book.rating || "4.4"}</span>
-              </div>
-              </div>
+
+                <div className="selected-book__time">
+                  <span>⭐ {book.rating || "4.4"}</span>
+                </div>
+              </Link>
             ))}
           </div>
         </section>
@@ -99,7 +98,7 @@ export default function ForYouPage() {
 
           <div className="for-you__books">
             {suggestedBooks.slice(0, 5).map((book) => (
-              <div className="for-you__book" key={book.id}>
+              <Link href={`/book/${book.id}`} className="for-you__book" key={book.id}>
                 {book.subscriptionRequired && (
                   <span className="book-pill">Premium</span>
                 )}
@@ -108,11 +107,11 @@ export default function ForYouPage() {
                 <h3>{book.title}</h3>
                 <p>{book.author}</p>
                 <p>{book.subTitle}</p>
+
                 <div className="selected-book__time">
-                  {/* <span>⏱ {book.duration || "03:24"}</span> */}
-                  <span>☆ {book.rating || "4.4"}</span>
+                  <span>⭐ {book.rating || "4.4"}</span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </section>

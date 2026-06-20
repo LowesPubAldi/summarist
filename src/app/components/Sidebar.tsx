@@ -11,66 +11,69 @@ import Link from "next/link";
 
 type SidebarProps = {
   showFontControls?: boolean;
+  onLoginClick?: () => void;
 };
 
 export default function Sidebar({
   showFontControls = false,
+  onLoginClick,
 }: SidebarProps) {
+  return (
+    <aside className="sidebar">
+      <div className="sidebar__logo">
+        <img src="/logo.png" alt="Summarist" />
+      </div>
 
-    return (
-        <aside className="sidebar">
-          <div className="sidebar__logo">
-            <img src="/logo.png" alt="Summarist"/>
-          </div>
-          <ul className="sidebar__menu">
-            <li>
-              <Link href="/for-you">
-                <HiOutlineHome />
+      <ul className="sidebar__menu">
+        <li>
+          <Link href="/for-you">
+            <HiOutlineHome />
             <span>For You</span>
-              </Link>
-            </li>
+          </Link>
+        </li>
 
-            <li>
-              <Link href="/library">
-                <HiOutlineBookmark />
+        <li>
+          <Link href="/library">
+            <HiOutlineBookmark />
             <span>My Library</span>
-              </Link>
-            </li>
+          </Link>
+        </li>
 
-            <li>
-              <HiOutlinePencil />
-            <span>Highlights</span>
-            </li>
+        <li>
+          <HiOutlinePencil />
+          <span>Highlights</span>
+        </li>
 
-            <li>
-              <HiOutlineSearch />
-            <span>Search</span>
-            </li>
-          </ul>
-        
-        {showFontControls && (
-          <div className="sidebar__font-size">
-            ...
-          </div>
-)}
-        
-        <ul className="sidebar__menu">
-          <li>
+        <li>
+          <HiOutlineSearch />
+          <span>Search</span>
+        </li>
+      </ul>
+
+      {showFontControls && (
+        <div className="sidebar__font-size">
+          ...
+        </div>
+      )}
+
+      <ul className="sidebar__menu">
+        <li>
           <Link href="/settings">
-          <HiOutlineCog />
+            <HiOutlineCog />
             <span>Settings</span>
           </Link>
-          </li>
+        </li>
 
-          <li>
-            <HiOutlineQuestionMarkCircle />
+        <li>
+          <HiOutlineQuestionMarkCircle />
           <span>Help & Support</span>
-          </li>
-          <li>
-            <HiOutlineLogin />
-            <span>Login</span>
-            </li>
-          </ul>
-        </aside>
-    );
+        </li>
+
+        <li onClick={onLoginClick}>
+          <HiOutlineLogin />
+          <span>Login</span>
+        </li>
+      </ul>
+    </aside>
+  );
 }

@@ -2,37 +2,76 @@
 
 import Sidebar from "@/app/components/Sidebar";
 import Searchbar from "@/app/components/Searchbar";
-import { useParams } from "next/navigation";
+import Modal from "@/app/components/Modal";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { BsBookmark } from "react-icons/bs";
-import { HiOutlineBookOpen } from "react-icons/hi";
-import { HiOutlinePlay } from "react-icons/hi";
+import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
+import { HiOutlineBookOpen, HiOutlinePlay } from "react-icons/hi";
 
 export default function BookPage() {
   const [book, setBook] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+      useEffect(() => {
+        const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+        setIsLoggedIn(loggedIn);
+      }, []);
+  const [isSaved, setIsSaved] = useState(false);
+
   const params = useParams();
+  const router = useRouter();
   const id = params.id;
 
- useEffect(() => {
-  const fetchData = async () => {
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch(
+        `https://us-central1-summaristt.cloudfunctions.net/getBook?id=${id}`
+      );
 
-    const response = await fetch(
-      `https://us-central1-summaristt.cloudfunctions.net/getBook?id=2l0idxm1rvw`
-    );
+      const text = await response.text();
 
-    const text = await response.text();
+      if (!text) {
+        return;
+      }
 
-    if (!text) {
+      const data = JSON.parse(text);
+      setBook(data);
+    };
+
+    fetchData();
+  }, [id]);
+
+const handleReadClick = () => {
+  if (!isLoggedIn) {
+    setIsModalOpen(true);
+    return;
+  }
+  router.push(`/book/${id}`);
+};
+
+const handleListenClick = () => {
+  if (!isLoggedIn) {
+    setIsModalOpen(true);
+    return;
+  }
+
+  router.push(`/player/${id}`);
+};
+
+  const handleLibraryClick = () => {
+    if (!isLoggedIn) {
+      setIsModalOpen(true);
       return;
     }
 
-    const data = JSON.parse(text);
-
-    setBook(data);
+    setIsSaved(!isSaved);
   };
 
-  fetchData();
-}, [id]);
+  const handleGuestLogin = () => {
+    setIsLoggedIn(true);
+    setIsModalOpen(false);
+  };
 
   if (!book) {
     return <div>Loading...</div>;
@@ -40,9 +79,11 @@ export default function BookPage() {
 
   return (
     <div className="book">
-      <Sidebar />
+      <Sidebar onLoginClick={() => setIsModalOpen(true)} />
+
       <main className="book__content">
         <Searchbar />
+
         <section className="book__hero">
           <div className="book__details">
             <h1>{book.title}</h1>
@@ -59,19 +100,21 @@ export default function BookPage() {
             </div>
 
             <div className="book__buttons">
-              <button>
+              <button onClick={handleReadClick}>
                 <HiOutlineBookOpen />
                 Read
-                </button>
-              <button>
+              </button>
+
+              <button onClick={handleListenClick}>
                 <HiOutlinePlay />
                 Listen
-                </button>
+              </button>
             </div>
 
-            <p className="book__library">
-                <BsBookmark /> Add title to My Library
-                </p>
+            <p className="book__library" onClick={handleLibraryClick}>
+              {isSaved ? <BsBookmarkFill /> : <BsBookmark />}
+              {isSaved ? " Saved in My Library" : " Add title to My Library"}
+            </p>
           </div>
 
           <figure className="book__image--wrapper">
@@ -81,6 +124,7 @@ export default function BookPage() {
 
         <section className="book__about">
           <h3>What's it about?</h3>
+
           <div className="book__tags">
             {book.tags?.map((tag: string) => (
               <span key={tag}>{tag}</span>
@@ -93,6 +137,11 @@ export default function BookPage() {
           <p>{book.authorDescription}</p>
         </section>
       </main>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }

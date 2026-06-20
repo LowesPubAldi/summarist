@@ -2,22 +2,73 @@
 
 import { useEffect, useState } from "react";
 import { HiOutlineSearch } from "react-icons/hi";
+import { useRouter } from "next/navigation";
+
+type Book = {
+  id: string;
+  title: string;
+  author?: string;
+  imageLink?: string;
+};
 
 export default function Searchbar() {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [books, setBooks] = useState<Book[]>([]);
+  const [isFocused, setIsFocused] = useState(false);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    async function fetchBooks() {
+      const statuses = ["selected", "recommended", "suggested"];
+
+      const responses = await Promise.all(
+        statuses.map((status) =>
+          fetch(
+            `https://us-central1-summaristt.cloudfunctions.net/getBooks?status=${status}`
+          )
+        )
+      );
+
+      const data = await Promise.all(
+        responses.map((response) => response.json())
+      );
+
+      const allBooks = data.flat();
+
+      setBooks(allBooks);
+    }
+
+    fetchBooks();
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
-    }, 500);
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [search]);
 
-  useEffect(() => {
-    if (!debouncedSearch) return;
-  }, [debouncedSearch]);
+  const filteredBooks =
+    debouncedSearch.trim().length > 0
+      ? books
+          .filter((book) => {
+            const searchValue = debouncedSearch.toLowerCase();
+
+            return (
+              book.title.toLowerCase().includes(searchValue) ||
+              book.author?.toLowerCase().includes(searchValue)
+            );
+          })
+          .slice(0, 6)
+      : [];
+  const handleBookClick = (bookId: string) => {
+    setSearch("");
+    setIsFocused(false);
+    router.push(`/book/${bookId}`);
+  };
 
   return (
     <div className="searchbar__nav">
@@ -27,8 +78,31 @@ export default function Searchbar() {
           placeholder="Search for books"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          onFocus={() => setIsFocused(true)}
         />
+
         <HiOutlineSearch />
+
+        {isFocused && filteredBooks.length > 0 && (
+          <div className="searchbar__dropdown">
+            {filteredBooks.map((book) => (
+              <div
+                key={book.id}
+                className="searchbar__dropdown-item"
+                onClick={() => handleBookClick(book.id)}
+              >
+                {book.imageLink && (
+                  <img src={book.imageLink} alt={book.title} />
+                )}
+
+                <div>
+                  <h4>{book.title}</h4>
+                  {book.author && <p>{book.author}</p>}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
