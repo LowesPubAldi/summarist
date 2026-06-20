@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { initFirebase } from "../firebase";
+import { useRouter } from "next/navigation"
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { getCheckoutUrl } from "./stripePayment";
 
 const faqs = [
   {
@@ -31,7 +35,45 @@ export default function ChoosePlanPage() {
     const [openFaq, setOpenFaq] = useState(0);
     const [selectedPlan, setSelectedPlan] = useState("yearly");
 
-  return (
+    const router = useRouter();
+
+    const app = initFirebase();
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    const yearlyPriceId = "YOUR_YEARLY_PRICE_ID";
+    const monthlyPriceId = "YOUR_MONTHLY_PRICE_ID";
+
+    const upgradeToPremium = async () => {
+    const user = auth.currentUser;
+
+    if (!user) {
+      await signInWithPopup(auth, provider);
+    }
+
+    const priceId =
+      selectedPlan === "monthly"
+        ? monthlyPriceId
+        : yearlyPriceId;
+
+    const checkoutUrl = await getCheckoutUrl(app, priceId);
+    router.push(checkoutUrl);
+  };
+
+    const goToAccount = () => {
+      router.push("/settings");
+      };
+
+    const signIn = async () => {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+    if (user) {  
+      router.push("/choose-plan");
+      }
+    };
+
+    return (
     <main className="plan">
       <section className="plan__hero">
         <h1>Get unlimited access to many amazing books to read</h1>
@@ -93,7 +135,7 @@ export default function ChoosePlanPage() {
         <div className="plan__trial-wrapper">
         <button
             className="plan__trial-btn"
-            onClick={() => alert(`Selected plan: ${selectedPlan}`)}
+            onClick={upgradeToPremium}
             >
               {selectedPlan === "monthly"
     ? "Start your first month"
