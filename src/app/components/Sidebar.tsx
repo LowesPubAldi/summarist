@@ -1,3 +1,5 @@
+"use client";
+
 import {
   HiOutlineHome,
   HiOutlineBookmark,
@@ -6,8 +8,11 @@ import {
   HiOutlineCog,
   HiOutlineQuestionMarkCircle,
   HiOutlineLogin,
+  HiOutlineLogout,
 } from "react-icons/hi";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 type SidebarProps = {
   showFontControls?: boolean;
@@ -18,6 +23,24 @@ export default function Sidebar({
   showFontControls = false,
   onLoginClick,
 }: SidebarProps) {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    setIsLoggedIn(localStorage.getItem("isLoggedIn") === "true");
+  }, []);
+
+  const handleAuthClick = () => {
+    if (isLoggedIn) {
+      localStorage.removeItem("isLoggedIn");
+      setIsLoggedIn(false);
+      window.location.reload();
+      return;
+    }
+
+    onLoginClick?.();
+  };
+
   return (
     <aside className="sidebar">
       <div className="sidebar__logo">
@@ -51,8 +74,13 @@ export default function Sidebar({
       </ul>
 
       {showFontControls && (
-        <div className="sidebar__font-size"></div>
-      )}
+    <div className="sidebar__font-size">
+       <button>Aa</button>
+       <button>Aa</button>
+       <button>Aa</button>
+       <button>Aa</button>
+    </div>
+    )}
 
       <ul className="sidebar__menu">
         <li>
@@ -67,9 +95,9 @@ export default function Sidebar({
           <span>Help & Support</span>
         </li>
 
-        <li onClick={onLoginClick}>
-          <HiOutlineLogin />
-          <span>Login</span>
+        <li onClick={handleAuthClick}>
+          {isLoggedIn ? <HiOutlineLogout /> : <HiOutlineLogin />}
+          <span>{isLoggedIn ? "Logout" : "Login"}</span>
         </li>
       </ul>
     </aside>

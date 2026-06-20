@@ -3,15 +3,22 @@
 import { useEffect, useState } from "react";
 import Sidebar from "@/app/components/Sidebar";
 import Searchbar from "@/app/components/Searchbar";
+import Modal from "@/app/components/Modal";
 import Link from "next/link";
 
 export default function ForYouPage() {
   const [selectedBook, setSelectedBook] = useState<any>(null);
   const [recommendedBooks, setRecommendedBooks] = useState<any[]>([]);
   const [suggestedBooks, setSuggestedBooks] = useState<any[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     async function getSelectedBook() {
+
+      const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+        setIsLoggedIn(loggedIn);
+
       const response = await fetch(
         "https://us-central1-summaristt.cloudfunctions.net/getBooks?status=selected"
       );
@@ -42,7 +49,7 @@ export default function ForYouPage() {
 
   return (
     <div className="for-you-page">
-      <Sidebar />
+      <Sidebar onLoginClick={() => setIsModalOpen(true)} />
 
       <main className="for-you">
         <Searchbar />
@@ -116,6 +123,15 @@ export default function ForYouPage() {
           </div>
         </section>
       </main>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onLoginSuccess={() => {
+        setIsModalOpen(false);
+        setIsLoggedIn(true);
+        window.location.reload();
+        }}
+        />
     </div>
   );
 }

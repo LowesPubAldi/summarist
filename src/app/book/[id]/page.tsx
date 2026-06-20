@@ -55,7 +55,7 @@ export default function BookPage() {
       return;
     }
 
-    router.push(`/book/${id}`);
+    router.push(`/player/${id}`);
   };
 
   const handleListenClick = () => {
@@ -159,7 +159,15 @@ export default function BookPage() {
         </section>
       </main>
 
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onLoginSuccess={() => {
+        setIsModalOpen(false);
+        setIsLoggedIn(true);
+        window.location.reload();
+      }}
+      />
     </div>
   );
 }

@@ -95,7 +95,9 @@ export default function ChoosePlanPage() {
             className="plan__trial-btn"
             onClick={() => alert(`Selected plan: ${selectedPlan}`)}
             >
-          Start your free 7-day trial
+              {selectedPlan === "monthly"
+    ? "Start your first month"
+    : "Start your free 7-day trial"}
           </button>
 
         <p className="plan__small">

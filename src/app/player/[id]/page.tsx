@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import Modal from "../../components/Modal";
 import Sidebar from "@/app/components/Sidebar";
@@ -10,6 +10,11 @@ export default function PlayerPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [book, setBook] = useState<any>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const params = useParams();
   const id = params.id;
@@ -27,19 +32,59 @@ export default function PlayerPage() {
 
       const text = await response.text();
 
-        if (!text) {
+      if (!text) {
         return;
-        }
+      }
 
-const data = JSON.parse(text);
-
-console.log("PLAYER BOOK:", data);
-
+      const data = JSON.parse(text);
       setBook(data);
     }
 
     fetchBook();
   }, [id]);
+
+  const formatTime = (time: number) => {
+    if (!time || Number.isNaN(time)) {
+      return "00:00";
+    }
+
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  };
+
+  const handlePlayPause = () => {
+    if (!audioRef.current) return;
+
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      audioRef.current.play();
+      setIsPlaying(true);
+    }
+  };
+
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!audioRef.current) return;
+
+    const newTime = Number(e.target.value);
+    audioRef.current.currentTime = newTime;
+    setCurrentTime(newTime);
+  };
+
+  const skipAudio = (seconds: number) => {
+    if (!audioRef.current) return;
+
+    const newTime = Math.min(
+      Math.max(audioRef.current.currentTime + seconds, 0),
+      duration
+    );
+
+    audioRef.current.currentTime = newTime;
+    setCurrentTime(newTime);
+  };
 
   if (!book) {
     return <div>Loading...</div>;
@@ -47,7 +92,10 @@ console.log("PLAYER BOOK:", data);
 
   return (
     <div className="player">
-      <Sidebar />
+      <Sidebar
+        showFontControls
+        onLoginClick={() => setIsModalOpen(true)}
+      />
 
       <main className="player__content">
         <Searchbar />
@@ -72,11 +120,33 @@ console.log("PLAYER BOOK:", data);
           </div>
         )}
 
-        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+         <Modal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onLoginSuccess={() => {
+          setIsModalOpen(false);
+          setIsLoggedIn(true);
+          window.location.reload();
+          }}
+          />
       </main>
 
       {isLoggedIn && (
         <div className="audio-player">
+          <audio
+            ref={audioRef}
+            src={book.audioLink}
+            onLoadedMetadata={() => {
+              if (!audioRef.current) return;
+              setDuration(audioRef.current.duration);
+            }}
+            onTimeUpdate={() => {
+              if (!audioRef.current) return;
+              setCurrentTime(audioRef.current.currentTime);
+            }}
+            onEnded={() => setIsPlaying(false)}
+          />
+
           <div className="audio-player__book">
             <img src={book.imageLink} alt={book.title} />
 
@@ -87,15 +157,28 @@ console.log("PLAYER BOOK:", data);
           </div>
 
           <div className="audio-player__controls">
-            <button>10</button>
-            <button className="audio-player__play">▶</button>
-            <button>10</button>
+            <button onClick={() => skipAudio(-10)}>10</button>
+
+            <button className="audio-player__play" onClick={handlePlayPause}>
+              {isPlaying ? "❚❚" : "▶"}
+            </button>
+
+            <button onClick={() => skipAudio(10)}>10</button>
           </div>
 
           <div className="audio-player__progress">
-            <span>00:00</span>
-            <input type="range" min="0" max="100" aria-label="Audio progress" />
-            <span>{book.totalDuration || "03:24"}</span>
+            <span>{formatTime(currentTime)}</span>
+
+            <input
+              type="range"
+              min="0"
+              max={duration || 0}
+              value={currentTime}
+              onChange={handleSeek}
+              aria-label="Audio progress"
+            />
+
+            <span>{formatTime(duration)}</span>
           </div>
         </div>
       )}

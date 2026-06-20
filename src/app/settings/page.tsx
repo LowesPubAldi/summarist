@@ -17,7 +17,7 @@ export default function SettingsPage() {
 
   return (
     <div className="settings">
-      <Sidebar showFontControls onLoginClick={() => setIsModalOpen(true)} />
+      <Sidebar onLoginClick={() => setIsModalOpen(true)} />
 
       <main className="settings__content">
         <Searchbar />
@@ -59,7 +59,15 @@ export default function SettingsPage() {
         )}
       </main>
 
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onLoginSuccess={() => {
+        setIsModalOpen(false);
+        setIsLoggedIn(true);
+        window.location.reload();
+        }}
+        />
     </div>
   );
 }

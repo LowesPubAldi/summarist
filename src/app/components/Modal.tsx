@@ -7,11 +7,13 @@ import { FaUser } from "react-icons/fa";
 type ModalProps = {
   isOpen: boolean;
   onClose: () => void;
+  onLoginSuccess?: () => void;
 };
 
 export default function Modal({
   isOpen,
   onClose,
+  onLoginSuccess,
 }: ModalProps) {
   const router = useRouter();
 
@@ -21,23 +23,30 @@ export default function Modal({
 
   if (!isOpen) return null;
 
+  const finishLogin = () => {
+    setError("");
+    localStorage.setItem("isLoggedIn", "true");
+    onClose();
+
+    if (onLoginSuccess) {
+      onLoginSuccess();
+      return;
+    }
+
+    router.push("/for-you");
+  };
+
   const handleLogin = () => {
     if (email === "guest@gmail.com" && password === "guest123") {
-      setError("");
-      localStorage.setItem("isLoggedIn", "true");
-      onClose();
-      router.push("/for-you");
+      finishLogin();
     } else {
       setError("Invalid email or password");
     }
   };
 
   const handleGuestLogin = () => {
-    setError("");
-    localStorage.setItem("isLoggedIn", "true");
-    onClose();
-    router.push("/for-you");
-};
+    finishLogin();
+  };
 
   return (
     <div className="modal__backdrop">

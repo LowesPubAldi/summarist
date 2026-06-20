@@ -19,6 +19,16 @@ export default function LibraryPage() {
     setSavedBooks(books);
   }, []);
 
+  const handleModalClose = () => {
+  setIsModalOpen(false);
+
+  const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+  setIsLoggedIn(loggedIn);
+
+  const books = JSON.parse(localStorage.getItem("savedBooks") || "[]");
+  setSavedBooks(books);
+};
+
   return (
     <div className="library">
       <Sidebar onLoginClick={() => setIsModalOpen(true)} />
@@ -74,7 +84,19 @@ export default function LibraryPage() {
         </section>
       </main>
 
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onLoginSuccess={() => {
+          setIsModalOpen(false);
+          setIsLoggedIn(true);
+
+        const books = JSON.parse(localStorage.getItem("savedBooks") || "[]");
+        setSavedBooks(books);
+
+        window.location.reload();
+        }}
+        />
     </div>
   );
 }

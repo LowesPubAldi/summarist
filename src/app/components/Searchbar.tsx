@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { HiOutlineSearch } from "react-icons/hi";
+import { HiOutlineSearch, HiOutlineX } from "react-icons/hi";
 import { useRouter } from "next/navigation";
 
 type Book = {
@@ -81,7 +81,23 @@ export default function Searchbar() {
           onFocus={() => setIsFocused(true)}
         />
 
-        <HiOutlineSearch />
+<div className="searchbar__icon">
+       {search ? (
+      <button
+        type="button"
+        className="searchbar__clear"
+        aria-label="clear search"
+        onClick={() => {
+        setSearch("");
+        setDebouncedSearch("");
+        }}
+        >
+        <HiOutlineX />
+      </button>
+        ) : (
+      <HiOutlineSearch />
+      )}
+      </div>
 
         {isFocused && filteredBooks.length > 0 && (
           <div className="searchbar__dropdown">
