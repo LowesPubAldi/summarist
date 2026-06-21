@@ -41,24 +41,23 @@ export default function ChoosePlanPage() {
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
-    const yearlyPriceId = "YOUR_YEARLY_PRICE_ID";
-    const monthlyPriceId = "YOUR_MONTHLY_PRICE_ID";
+    const yearlyPriceId = "price_1TkcG5FRRyhPU4nPN7nxBiWf";
+    const monthlyPriceId = "price_1TkcF3FRRyhPU4nPP03MgsqT";
 
     const upgradeToPremium = async () => {
-    const user = auth.currentUser;
+      let user = auth.currentUser;
 
     if (!user) {
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      user = result.user;
     }
 
     const priceId =
-      selectedPlan === "monthly"
-        ? monthlyPriceId
-        : yearlyPriceId;
+      selectedPlan === "monthly" ? monthlyPriceId : yearlyPriceId;
 
     const checkoutUrl = await getCheckoutUrl(app, priceId);
-    router.push(checkoutUrl);
-  };
+      window.location.href = checkoutUrl;
+};
 
     const goToAccount = () => {
       router.push("/settings");
