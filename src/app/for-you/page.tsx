@@ -6,10 +6,30 @@ import Searchbar from "@/app/components/Searchbar";
 import Modal from "@/app/components/Modal";
 import Link from "next/link";
 
+type Book = {
+  id: string;
+  title: string;
+  author?: string;
+  subTitle?: string;
+  imageLink?: string;
+  summary?: string;
+  bookDescription?: string;
+  status?: string;
+  subscriptionRequired?: boolean;
+  audioLink?: string;
+  averageRating?: number;
+  totalRating?: number;
+  totalDuration?: string;
+  keyIdeas?: number;
+  tags?: string[];
+  authorDescription?: string;
+  rating?: number | string;
+};
+
 export default function ForYouPage() {
-  const [selectedBook, setSelectedBook] = useState<any>(null);
-  const [recommendedBooks, setRecommendedBooks] = useState<any[]>([]);
-  const [suggestedBooks, setSuggestedBooks] = useState<any[]>([]);
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+  const [recommendedBooks, setRecommendedBooks] = useState<Book[] | null>(null);
+  const [suggestedBooks, setSuggestedBooks] = useState<Book[] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -31,7 +51,7 @@ export default function ForYouPage() {
         "https://us-central1-summaristt.cloudfunctions.net/getBooks?status=recommended"
       );
       const data = await response.json();
-      setRecommendedBooks(data);
+      setRecommendedBooks(data as Book[]);
     }
 
     async function getSuggestedBooks() {
@@ -39,7 +59,7 @@ export default function ForYouPage() {
         "https://us-central1-summaristt.cloudfunctions.net/getBooks?status=suggested"
       );
       const data = await response.json();
-      setSuggestedBooks(data);
+      setSuggestedBooks(data as Book[]);
     }
 
     getSelectedBook();
@@ -57,7 +77,7 @@ export default function ForYouPage() {
         <section className="for-you__selected">
           <h2>Selected just for you</h2>
 
-          <div className="selected-book">
+          <Link href={`/book/${selectedBook?.id}`} className="selected-book">
             <div className="selected-book__text">
               <p>{selectedBook?.subTitle}</p>
             </div>
@@ -73,7 +93,7 @@ export default function ForYouPage() {
                 <span>3 mins 23 secs</span>
               </div>
             </div>
-          </div>
+          </Link>
         </section>
 
         <section className="for-you__recommended">
@@ -81,7 +101,7 @@ export default function ForYouPage() {
           <p>We think you&apos;ll like these</p>
 
           <div className="for-you__books">
-            {recommendedBooks.slice(0, 5).map((book) => (
+            {recommendedBooks?.slice(0, 5).map((book) => (
               <Link href={`/book/${book.id}`} className="for-you__book" key={book.id}>
                 {book.subscriptionRequired && (
                   <span className="book-pill">Premium</span>
@@ -104,7 +124,7 @@ export default function ForYouPage() {
           <h2>Suggested Books</h2>
 
           <div className="for-you__books">
-            {suggestedBooks.slice(0, 5).map((book) => (
+            {suggestedBooks?.slice(0, 5).map((book) => (
               <Link href={`/book/${book.id}`} className="for-you__book" key={book.id}>
                 {book.subscriptionRequired && (
                   <span className="book-pill">Premium</span>

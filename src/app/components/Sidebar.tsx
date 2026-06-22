@@ -27,6 +27,7 @@ export default function Sidebar({
   const router = useRouter();
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoggedIn(localStorage.getItem("isLoggedIn") === "true");
   }, []);
 

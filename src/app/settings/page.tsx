@@ -12,6 +12,7 @@ export default function SettingsPage() {
 
   useEffect(() => {
     const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoggedIn(loggedIn);
   }, []);
 

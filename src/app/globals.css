@@ -560,22 +560,22 @@ button:disabled {
 }
 
 .player__title {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding-top: 24px;
-  padding-bottom: 160px;
+  width: 100%;
+  max-width: 720 px;
+  margin: 0 auto;
+  padding-top: 72px;
+  padding-bottom: 140px;
 }
 
 .player__title h1 {
   font-size: 20px;
   font-weight: 700;
   color: #032b41;
-  width: 70%;
-  padding-bottom: 16px;
+  width: 100%;
+  padding-bottom: 24px;
   margin: 0 0 48px;
   border-bottom: 1px solid #e5e7eb;
+  text-align: center;
 }
 
 .player__title img {
@@ -584,27 +584,36 @@ button:disabled {
 }
 
 .player__title h2 {
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 400;
   color: #032b41;
-
-  max-width: 650px;
-  margin: 32px 0 24px;
+  line-height: 1.5;
+  max-width: 640px;
+  margin: 0 auto 28px;
+  text-align: left;
 }
 
 .player__title button {
   width: 220px;
   height: 44px;
   display: block;
-  margin: 24 px auto 0;
+  margin: 24px auto 0;
   background: #2bdc6d;
   border: none;
   border-radius: 4px;
-
   color: white;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
+}
+
+.player__title p {
+  max-width: 700px;
+  margin: 0 auto 28px;
+  text-align: left;
+  line-height: 1.7;
+  font-size: 16px;
+  color: #032b41;
 }
 
 /* SEARCH BAR */
@@ -1409,6 +1418,15 @@ button:disabled {
   margin-top: 16px;
 }
 
+.plan__back-btn {
+  margin-top: 12px;
+  border: none;
+  background: transparent;
+  color: #032b41;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 .plan__small {
   margin-top: 8px;
   font-size: 12px;
@@ -1474,6 +1492,87 @@ button:disabled {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* PAYMENT MODAL */
+
+.payment-modal__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.payment-modal {
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  text-align: center;
+  color: #032b41;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+.payment-modal__buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+  align-items: center;
+}
+
+.payment-modal__continue,
+.payment-modal__back {
+  width: 220px;
+  height: 44px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.payment-modal__buttons button {
+  height: 44px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.payment-modal__continue {
+  background: #2bd97c;
+  color: white;
+}
+
+.payment-modal__continue:hover {
+  background: #22b566;
+}
+
+.payment-modal__back {
+  background: #032b41;
+  color: white;
+}
+
+.payment-modal__back:hover {
+  background: #021e2d;
+}
+
+.payment-modal h1 {
+  font-size: 32px;
+  margin-bottom: 12px;
+  color: #032b41;
+}
+
+.payment-modal p {
+  font-size: 20px;
+  color: #394547;
+  margin-bottom: 16px;
 }
 
 /* LIBRARY */
@@ -1620,6 +1719,9 @@ button:disabled {
   background: #fff7e6;
   padding: 24px;
   max-width: 620px;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
 }
 
 .selected-book img {

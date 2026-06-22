@@ -8,20 +8,39 @@ import { useEffect, useState } from "react";
 import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
 import { HiOutlineBookOpen, HiOutlinePlay } from "react-icons/hi";
 
+type Book = {
+  id: string;
+  title: string;
+  author?: string;
+  subTitle?: string;
+  imageLink?: string;
+  summary?: string;
+  bookDescription?: string;
+  status?: string;
+  subscriptionRequired?: boolean;
+  audioLink?: string;
+  averageRating?: number;
+  totalRating?: number;
+  totalDuration?: string;
+  keyIdeas?: number;
+  tags?: string[];
+  authorDescription?: string;
+};
+
 export default function BookPage() {
-  const [book, setBook] = useState<any>(null);
+  const [book, setBook] = useState<Book | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
-
   const params = useParams();
   const router = useRouter();
   const id = params.id;
 
   useEffect(() => {
-    const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+  const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoggedIn(loggedIn);
-  }, []);
+    }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,7 +59,7 @@ export default function BookPage() {
 
       const savedBooks = JSON.parse(localStorage.getItem("savedBooks") || "[]");
       const bookAlreadySaved = savedBooks.some(
-        (savedBook: any) => savedBook.id === data.id
+        (savedBook: Book) => savedBook.id === data.id
       );
 
       setIsSaved(bookAlreadySaved);
@@ -49,39 +68,43 @@ export default function BookPage() {
     fetchData();
   }, [id]);
 
-  const handleReadClick = () => {
-    if (!isLoggedIn) {
-      setIsModalOpen(true);
-      return;
-    }
+const handleReadClick = () => {
+  const isPreviewBook = book?.status === "selected";
 
-    router.push(`/player/${id}`);
-  };
+  if (book?.subscriptionRequired && !isPreviewBook) {
+    router.push("/choose-plan");
+    return;
+  }
 
-  const handleListenClick = () => {
-    if (!isLoggedIn) {
-      setIsModalOpen(true);
-      return;
-    }
+  router.push(`/player/${id}`);
+};
 
-    router.push(`/player/${id}`);
-  };
+const handleListenClick = () => {
+  const isPreviewBook = book?.status === "selected";
 
+  if (book?.subscriptionRequired && !isPreviewBook) {
+    router.push("/choose-plan");
+    return;
+  }
+
+  router.push(`/player/${id}`);
+};
   const handleLibraryClick = () => {
     if (!isLoggedIn) {
       setIsModalOpen(true);
       return;
     }
+    if (!book) return;
 
     const savedBooks = JSON.parse(localStorage.getItem("savedBooks") || "[]");
 
     const bookAlreadySaved = savedBooks.some(
-      (savedBook: any) => savedBook.id === book.id
+      (savedBook: Book) => savedBook.id === book.id
     );
 
     if (bookAlreadySaved) {
       const updatedBooks = savedBooks.filter(
-        (savedBook: any) => savedBook.id !== book.id
+        (savedBook: Book) => savedBook.id !== book.id
       );
 
       localStorage.setItem("savedBooks", JSON.stringify(updatedBooks));
@@ -144,7 +167,7 @@ export default function BookPage() {
         </section>
 
         <section className="book__about">
-          <h3>What's it about?</h3>
+          <h3>What&apos;s it about?</h3>
 
           <div className="book__tags">
             {book.tags?.map((tag: string) => (

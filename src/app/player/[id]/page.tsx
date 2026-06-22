@@ -6,10 +6,29 @@ import Modal from "../../components/Modal";
 import Sidebar from "@/app/components/Sidebar";
 import Searchbar from "@/app/components/Searchbar";
 
+type Book = {
+  id: string;
+  title: string;
+  author?: string;
+  subTitle?: string;
+  imageLink?: string;
+  summary?: string;
+  bookDescription?: string;
+  status?: string;
+  subscriptionRequired?: boolean;
+  audioLink?: string;
+  averageRating?: number;
+  totalRating?: number;
+  totalDuration?: string;
+  keyIdeas?: number;
+  tags?: string[];
+  authorDescription?: string;
+};
+
 export default function PlayerPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [book, setBook] = useState<any>(null);
+  const [book, setBook] = useState<Book | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -21,6 +40,7 @@ export default function PlayerPage() {
 
   useEffect(() => {
     const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoggedIn(loggedIn);
   }, []);
 
@@ -102,7 +122,6 @@ export default function PlayerPage() {
 
         {!isLoggedIn ? (
           <div className="player__title">
-            <h1>{book.title}</h1>
 
             <img src="/login.png" alt="" />
 

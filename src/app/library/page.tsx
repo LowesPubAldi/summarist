@@ -6,13 +6,33 @@ import Sidebar from "@/app/components/Sidebar";
 import Searchbar from "@/app/components/Searchbar";
 import Modal from "@/app/components/Modal";
 
+type Book = {
+  id: string;
+  title: string;
+  author?: string;
+  subTitle?: string;
+  imageLink?: string;
+  summary?: string;
+  bookDescription?: string;
+  status?: string;
+  subscriptionRequired?: boolean;
+  audioLink?: string;
+  averageRating?: number;
+  totalRating?: number;
+  totalDuration?: string;
+  keyIdeas?: number;
+  tags?: string[];
+  authorDescription?: string;
+};
+
 export default function LibraryPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [savedBooks, setSavedBooks] = useState<any[]>([]);
+  const [savedBooks, setSavedBooks] = useState<Book[]>([]);
 
   useEffect(() => {
     const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoggedIn(loggedIn);
 
     const books = JSON.parse(localStorage.getItem("savedBooks") || "[]");

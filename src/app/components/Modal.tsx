@@ -26,6 +26,7 @@ export default function Modal({
   const finishLogin = () => {
     setError("");
     localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("isGuest", "true");
     onClose();
 
     if (onLoginSuccess) {

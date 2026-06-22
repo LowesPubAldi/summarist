@@ -5,6 +5,7 @@ import { initFirebase } from "../firebase";
 import { useRouter } from "next/navigation"
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import PaymentModal from "../components/PaymentModal";
 import { getCheckoutUrl } from "./stripePayment";
 
 const faqs = [
@@ -20,7 +21,7 @@ const faqs = [
       "While an annual plan is active, it is not feasible to switch to a monthly plan. However, once the current month ends, transitioning from a monthly plan to an annual plan is an option.",
   },
   {
-    question: "What's included in the Premium plan?",
+    question: "What&apos;s included in the Premium plan?",
     answer:
       "Premium membership provides you with the ultimate Summarist experience, including unrestricted entry to many best-selling books high-quality audio, the ability to download titles for offline reading, and the option to send your reads to your Kindle.",
   },
@@ -34,6 +35,7 @@ const faqs = [
 export default function ChoosePlanPage() {
     const [openFaq, setOpenFaq] = useState(0);
     const [selectedPlan, setSelectedPlan] = useState("yearly");
+    const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
     const router = useRouter();
 
@@ -57,6 +59,10 @@ export default function ChoosePlanPage() {
 
     const checkoutUrl = await getCheckoutUrl(app, priceId);
       window.location.href = checkoutUrl;
+};
+
+    const backToHome = () => {
+      router.push("/for-you");
 };
 
     const goToAccount = () => {
@@ -134,7 +140,7 @@ export default function ChoosePlanPage() {
         <div className="plan__trial-wrapper">
         <button
             className="plan__trial-btn"
-            onClick={upgradeToPremium}
+            onClick={() => setIsPaymentModalOpen(true)}
             >
               {selectedPlan === "monthly"
     ? "Start your first month"
@@ -142,7 +148,7 @@ export default function ChoosePlanPage() {
           </button>
 
         <p className="plan__small">
-          Cancel your trial at any time before it ends, and you won't be charged.
+          Cancel your trial at any time before it ends, and you won&apos;t be charged.
         </p>
         </div>
       </section>
@@ -253,6 +259,13 @@ export default function ChoosePlanPage() {
             </div>
           </div>
         </div>
+        <PaymentModal
+          isOpen={isPaymentModalOpen}
+          onClose={() => setIsPaymentModalOpen(false)}
+          selectedPlan={selectedPlan}
+          onContinue={upgradeToPremium}
+          onBackHome={() => router.push("/for-you")}
+          />
       </div>
     </section>
     </main>
