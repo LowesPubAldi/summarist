@@ -32,79 +32,95 @@ export default function BookPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [loading, setLoading] = useState(true);
+
   const params = useParams();
   const router = useRouter();
-  const id = params.id;
+  const id = params.id as string;
 
   useEffect(() => {
-  const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+    const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoggedIn(loggedIn);
-    }, []);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch(
-        `https://us-central1-summaristt.cloudfunctions.net/getBook?id=${id}`
-      );
+      try {
+        setLoading(true);
 
-      const text = await response.text();
+        const response = await fetch(
+          `https://us-central1-summaristt.cloudfunctions.net/getBook?id=${id}`
+        );
 
-      if (!text) {
-        return;
+        const text = await response.text();
+
+        if (!text) {
+          return;
+        }
+
+        const data: Book = JSON.parse(text);
+        setBook(data);
+
+        const savedBooks: Book[] = JSON.parse(
+          localStorage.getItem("savedBooks") || "[]"
+        );
+
+        const bookAlreadySaved = savedBooks.some(
+          (savedBook) => savedBook.id === data.id
+        );
+
+        setIsSaved(bookAlreadySaved);
+      } finally {
+        setLoading(false);
       }
-
-      const data = JSON.parse(text);
-      setBook(data);
-
-      const savedBooks = JSON.parse(localStorage.getItem("savedBooks") || "[]");
-      const bookAlreadySaved = savedBooks.some(
-        (savedBook: Book) => savedBook.id === data.id
-      );
-
-      setIsSaved(bookAlreadySaved);
     };
 
     fetchData();
   }, [id]);
 
-const handleReadClick = () => {
-  const isPreviewBook = book?.status === "selected";
+  const handleReadClick = () => {
+    const isPreviewBook = book?.status === "selected";
 
-  if (book?.subscriptionRequired && !isPreviewBook) {
-    router.push("/choose-plan");
-    return;
-  }
+    if (book?.subscriptionRequired && !isPreviewBook) {
+      router.push("/choose-plan");
+      return;
+    }
 
-  router.push(`/player/${id}`);
-};
+    router.push(`/player/${id}`);
+  };
 
-const handleListenClick = () => {
-  const isPreviewBook = book?.status === "selected";
+  const handleListenClick = () => {
+    const isPreviewBook = book?.status === "selected";
 
-  if (book?.subscriptionRequired && !isPreviewBook) {
-    router.push("/choose-plan");
-    return;
-  }
+    if (book?.subscriptionRequired && !isPreviewBook) {
+      router.push("/choose-plan");
+      return;
+    }
 
-  router.push(`/player/${id}`);
-};
+    router.push(`/player/${id}`);
+  };
+
   const handleLibraryClick = () => {
     if (!isLoggedIn) {
       setIsModalOpen(true);
       return;
     }
+
     if (!book) return;
 
-    const savedBooks = JSON.parse(localStorage.getItem("savedBooks") || "[]");
+    const savedBooks: Book[] = JSON.parse(
+      localStorage.getItem("savedBooks") || "[]"
+    );
 
     const bookAlreadySaved = savedBooks.some(
-      (savedBook: Book) => savedBook.id === book.id
+      (savedBook) => savedBook.id === book.id
     );
 
     if (bookAlreadySaved) {
       const updatedBooks = savedBooks.filter(
-        (savedBook: Book) => savedBook.id !== book.id
+        (savedBook) => savedBook.id !== book.id
       );
 
       localStorage.setItem("savedBooks", JSON.stringify(updatedBooks));
@@ -117,8 +133,53 @@ const handleListenClick = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="book">
+        <Sidebar onLoginClick={() => setIsModalOpen(true)} />
+
+        <main className="book__content">
+          <Searchbar />
+
+          <section className="book__skeleton">
+            <div className="book__skeleton-info">
+              <div className="book__skeleton-line book__skeleton-title" />
+              <div className="book__skeleton-line book__skeleton-author" />
+              <div className="book__skeleton-line book__skeleton-subtitle" />
+
+              <div className="book__skeleton-stats">
+                <div />
+                <div />
+                <div />
+                <div />
+              </div>
+
+              <div className="book__skeleton-buttons">
+                <div />
+                <div />
+              </div>
+            </div>
+
+            <div className="book__skeleton-cover" />
+          </section>
+
+          <section className="book__skeleton-about">
+            <div className="book__skeleton-line book__skeleton-heading" />
+            <div className="book__skeleton-tags">
+              <div />
+              <div />
+            </div>
+            <div className="book__skeleton-line" />
+            <div className="book__skeleton-line" />
+            <div className="book__skeleton-line book__skeleton-short" />
+          </section>
+        </main>
+      </div>
+    );
+  }
+
   if (!book) {
-    return <div>Loading...</div>;
+    return null;
   }
 
   return (
@@ -170,7 +231,7 @@ const handleListenClick = () => {
           <h3>What&apos;s it about?</h3>
 
           <div className="book__tags">
-            {book.tags?.map((tag: string) => (
+            {book.tags?.map((tag) => (
               <span key={tag}>{tag}</span>
             ))}
           </div>
@@ -186,10 +247,10 @@ const handleListenClick = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onLoginSuccess={() => {
-        setIsModalOpen(false);
-        setIsLoggedIn(true);
-        window.location.reload();
-      }}
+          setIsModalOpen(false);
+          setIsLoggedIn(true);
+          window.location.reload();
+        }}
       />
     </div>
   );

@@ -79,13 +79,36 @@ export default function Sidebar({
       </ul>
 
       {showFontControls && (
-    <div className="sidebar__font-size">
-       <button onClick={() => setFontSize?.(14)}>Aa</button>
-       <button onClick={() => setFontSize?.(16)}>Aa</button>
-       <button onClick={() => setFontSize?.(18)}>Aa</button>
-       <button onClick={() => setFontSize?.(20)}>Aa</button>
-    </div>
-    )}
+      <div className="sidebar__font-size">
+        <button
+          className={fontSize === 14 ? "sidebar__font-size--active" : ""}
+          onClick={() => setFontSize?.(14)}
+          >
+          Aa
+        </button>
+
+        <button
+          className={fontSize === 16 ? "sidebar__font-size--active" : ""}
+          onClick={() => setFontSize?.(16)}
+          >
+          Aa
+        </button>
+
+        <button
+          className={fontSize === 18 ? "sidebar__font-size--active" : ""}
+          onClick={() => setFontSize?.(18)}
+          >
+          Aa
+        </button>
+
+        <button
+          className={fontSize === 20 ? "sidebar__font-size--active" : ""}
+          onClick={() => setFontSize?.(20)}
+          >
+          Aa
+        </button>
+      </div>
+)}
 
       <ul className="sidebar__menu">
         <li>

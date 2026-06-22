@@ -5,6 +5,8 @@ import { useParams } from "next/navigation";
 import Modal from "../../components/Modal";
 import Sidebar from "@/app/components/Sidebar";
 import Searchbar from "@/app/components/Searchbar";
+import { MdReplay10, MdForward10 } from "react-icons/md";
+import { FaPlay, FaPause } from "react-icons/fa";
 
 type Book = {
   id: string;
@@ -31,34 +33,42 @@ export default function PlayerPage() {
   const [book, setBook] = useState<Book | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
+  const [loading, setLoading] = useState(true);
   const [duration, setDuration] = useState(0);
   const [fontSize, setFontSize] = useState(16);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const params = useParams();
-  const id = params.id;
+  const id = params.id as string;
 
   useEffect(() => {
     const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoggedIn(loggedIn);
   }, []);
 
   useEffect(() => {
     async function fetchBook() {
-      const response = await fetch(
-        `https://us-central1-summaristt.cloudfunctions.net/getBook?id=${id}`
-      );
+      try {
+        setLoading(true);
 
-      const text = await response.text();
+        const response = await fetch(
+          `https://us-central1-summaristt.cloudfunctions.net/getBook?id=${id}`
+        );
 
-      if (!text) {
-        return;
+        const text = await response.text();
+
+        if (!text) {
+          return;
+        }
+
+        const data: Book = JSON.parse(text);
+        setBook(data);
+      } finally {
+        setLoading(false);
       }
-
-      const data = JSON.parse(text);
-      setBook(data);
     }
 
     fetchBook();
@@ -107,8 +117,57 @@ export default function PlayerPage() {
     setCurrentTime(newTime);
   };
 
+  if (loading) {
+    return (
+      <div className="player">
+        <Sidebar
+          showFontControls
+          fontSize={fontSize}
+          setFontSize={setFontSize}
+          onLoginClick={() => setIsModalOpen(true)}
+        />
+
+        <main className="player__content">
+          <Searchbar />
+
+          <div className="player__skeleton">
+            <div className="player__skeleton-line player__skeleton-title" />
+            <div className="player__skeleton-line" />
+            <div className="player__skeleton-line" />
+            <div className="player__skeleton-line player__skeleton-short" />
+            <div className="player__skeleton-line" />
+            <div className="player__skeleton-line player__skeleton-shorter" />
+          </div>
+        </main>
+
+        <div className="audio-player">
+          <div className="audio-player__book">
+            <div className="player__skeleton-cover-small" />
+
+            <div>
+              <div className="player__skeleton-audio-line" />
+              <div className="player__skeleton-audio-line player__skeleton-audio-short" />
+            </div>
+          </div>
+
+          <div className="audio-player__controls">
+            <div className="player__skeleton-circle" />
+            <div className="player__skeleton-play" />
+            <div className="player__skeleton-circle" />
+          </div>
+
+          <div className="audio-player__progress">
+            <span>00:00</span>
+            <div className="player__skeleton-progress" />
+            <span>00:00</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (!book) {
-    return <div>Loading...</div>;
+    return null;
   }
 
   return (
@@ -125,7 +184,6 @@ export default function PlayerPage() {
 
         {!isLoggedIn ? (
           <div className="player__title">
-
             <img src="/login.png" alt="" />
 
             <h2>Log in to your account to read and listen to the book</h2>
@@ -144,15 +202,15 @@ export default function PlayerPage() {
           </div>
         )}
 
-         <Modal
+        <Modal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onLoginSuccess={() => {
-          setIsModalOpen(false);
-          setIsLoggedIn(true);
-          window.location.reload();
+            setIsModalOpen(false);
+            setIsLoggedIn(true);
+            window.location.reload();
           }}
-          />
+        />
 
         <style jsx>{`
           .player__summary {
@@ -161,61 +219,67 @@ export default function PlayerPage() {
         `}</style>
       </main>
 
-      {isLoggedIn && (
-        <div className="audio-player">
-          <audio
-            ref={audioRef}
-            src={book.audioLink}
-            onLoadedMetadata={() => {
-              if (!audioRef.current) return;
-              setDuration(audioRef.current.duration);
-            }}
-            onTimeUpdate={() => {
-              if (!audioRef.current) return;
-              setCurrentTime(audioRef.current.currentTime);
-            }}
-            onEnded={() => setIsPlaying(false)}
-          />
+      <div className="audio-player">
+        <audio
+          ref={audioRef}
+          src={book.audioLink}
+          onLoadedMetadata={() => {
+            if (!audioRef.current) return;
+            setDuration(audioRef.current.duration);
+          }}
+          onTimeUpdate={() => {
+            if (!audioRef.current) return;
+            setCurrentTime(audioRef.current.currentTime);
+          }}
+          onEnded={() => setIsPlaying(false)}
+        />
 
-          <div className="audio-player__book">
-            <img src={book.imageLink} alt={book.title} />
+        <div className="audio-player__book">
+          <img src={book.imageLink} alt={book.title} />
 
-            <div>
-              <h4>{book.title}</h4>
-              <p>{book.author}</p>
-            </div>
-          </div>
-
-          <div className="audio-player__controls">
-            <button 
-              className="audio-player__skip"
-              onClick={() => skipAudio(-10)}>
-              10
-              </button>
-
-            <button className="audio-player__play" onClick={handlePlayPause}>
-              {isPlaying ? "❚❚" : "▶"}
-            </button>
-
-            <button onClick={() => skipAudio(10)}>10</button>
-          </div>
-
-          <div className="audio-player__progress">
-            <span>{formatTime(currentTime)}</span>
-
-            <input
-              type="range"
-              min="0"
-              max={duration || 0}
-              value={currentTime}
-              onChange={handleSeek}
-              aria-label="Audio progress"
-            />
-
-            <span>{formatTime(duration)}</span>
+          <div>
+            <h4>{book.title}</h4>
+            <p>{book.author}</p>
           </div>
         </div>
-      )}
+
+        <div className="audio-player__controls">
+          <button
+            className="audio-player__skip"
+            onClick={() => skipAudio(-10)}
+            aria-label="Rewind 10 seconds"
+          >
+            <MdReplay10 />
+          </button>
+
+          <button className="audio-player__play" onClick={handlePlayPause}>
+            {isPlaying ? <FaPause /> : <FaPlay />}
+          </button>
+
+          <button
+            className="audio-player__skip"
+            onClick={() => skipAudio(10)}
+            aria-label="Forward 10 seconds"
+          >
+            <MdForward10 />
+          </button>
+        </div>
+
+        <div className="audio-player__progress">
+          <span>{formatTime(currentTime)}</span>
+
+          <input
+            type="range"
+            min="0"
+            max={duration || 0}
+            value={currentTime}
+            onChange={handleSeek}
+            aria-label="Audio progress"
+          />
+
+          <span>{formatTime(duration)}</span>
+        </div>
+      </div>
     </div>
   );
 }

@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import Sidebar from "@/app/components/Sidebar";
 import Searchbar from "@/app/components/Searchbar";
 import Modal from "@/app/components/Modal";
+import { useRouter } from "next/navigation";
 
 export default function SettingsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isPremium, setIsPremium] = useState(false);
+  const [isPremium] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const loggedIn = localStorage.getItem("isLoggedIn") === "true";
@@ -34,10 +36,10 @@ export default function SettingsPage() {
               {!isPremium && (
                 <button
                   className="settings__button"
-                  onClick={() => setIsPremium(true)}
-                >
+                  onClick={() => router.push("/choose-plan")}
+                  >
                   Upgrade to Premium
-                </button>
+              </button>
               )}
             </div>
 

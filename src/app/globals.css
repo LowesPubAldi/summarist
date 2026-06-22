@@ -612,32 +612,6 @@ button:disabled {
   line-height: 1.7;
 }
 
-.audio-player__skip {
-  width: 36px;
-  height: 36px;
-  border: 2px solid #9ca3af;
-  border-radius: 50%;
-  background: transparent;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.audio-player__skip span {
-  line-height: 1;
-}
-
-.audio-player__skip {
-  border: 2px solid #9ca3af;
-  border-left-color: transparent;
-}
-
-
-
 /* SEARCH BAR */
 
 .searchbar__nav {
@@ -804,13 +778,11 @@ button:disabled {
   background: transparent;
   color: #032b41;
   cursor: pointer;
-  font-weight: 400;
-  padding: 0;
+  padding-bottom: 6;
 }
 
 .sidebar__font-size button:nth-child(1) {
   font-size: 18px;
-  border-bottom: 3px solid #2bd97c;
 }
 
 .sidebar__font-size button:nth-child(2) {
@@ -825,6 +797,10 @@ button:disabled {
   font-size: 30px;
 }
 
+.sidebar__font-size--active {
+  border-bottom: 3px solid #2bd97c !important;
+}
+
 /* BOOK */
 
 .audio-player {
@@ -835,14 +811,14 @@ button:disabled {
   height: 96px;
   background: #042330;
   color: white;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   padding: 0 40px;
   z-index: 100;
 }
 
 .audio-player__book {
-  width: 35%;
   display: flex;
   align-items: center;
   gap: 16px;
@@ -866,11 +842,10 @@ button:disabled {
 }
 
 .audio-player__controls {
-  width: 20%;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 16px;
+  gap: 24px;
 }
 
 .audio-player__controls button {
@@ -889,14 +864,50 @@ button:disabled {
 }
 
 .audio-player__progress {
-  width: 45%;
   display: flex;
   align-items: center;
   gap: 12px;
+  justify-self: end;
+  width: 420px;
+  max-width: 100%;
 }
 
 .audio-player__progress input {
   width: 100%;
+}
+
+.audio-player__skip {
+  width: 38px;
+  height: 38px;
+  border: none;
+  background: transparent;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.audio-player__skip svg {
+  width: 32px;
+  height: 32px;
+}
+
+.audio-player__play {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white !important;
+  color: #042330 !important;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.audio-player__play svg {
+  width: 20px;
+  height: 20px;
 }
 
 /* MODAL */
@@ -1285,16 +1296,6 @@ button:disabled {
   text-align: center;
 }
 
-.settings__card img {
-  width: 320px;
-  margin-bottom: 32px;
-}
-
-.settings__card h2 {
-  font-size: 24px;
-  margin-bottom: 24px;
-}
-
 .settings__card button {
   width: 120px;
   height: 40px;
@@ -1328,6 +1329,7 @@ button:disabled {
   padding: 12px 24px;
   font-weight: 700;
   cursor: pointer;
+  margin-top: 16px;
 }
 
 .settings__logged-out {
@@ -1335,14 +1337,20 @@ button:disabled {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 60vh;
+  min-height: 55vh;
   text-align: center;
 }
 
-.settings__logged-out img {
-  width: 240px;
+.settings__logged-out h2 {
   margin-bottom: 24px;
 }
+
+.settings__logged-out img {
+  width: 400px;
+  margin-bottom: 32px;
+}
+
+
 
 /* SALES PAGE */
 
@@ -1851,4 +1859,209 @@ button:disabled {
   font-size: 14px;
   color: #666;
   margin-bottom: 24px;
+}
+
+/* SKELETON LOADING BOOK */
+
+.book__skeleton {
+  display: flex;
+  gap: 40px;
+  margin: 64px auto 0;
+  max-width: 900px;
+}
+
+.book__skeleton-cover,
+.book__skeleton-line,
+.book__skeleton-buttons {
+  background: #e5e7eb;
+  border-radius: 8px;
+  animation: skeleton-pulse 1.2s ease-in-out infinite alternate;
+}
+
+.book__skeleton-cover {
+  width: 300px;
+  height: 450px;
+}
+
+.book__skeleton-info {
+  flex: 1;
+  padding-top: 24px;
+}
+
+.book__skeleton-title {
+  height: 32px;
+  width: 80%;
+}
+
+.book__skeleton-buttons {
+  width: 240px;
+  height: 48px;
+  margin-top: 32px;
+}
+
+.book__skeleton-about {
+  max-width: 700px;
+  margin: 48px auto 0;
+}
+
+.book__skeleton-heading {
+  width: 40%;
+}
+
+.book__skeleton-short {
+  width: 65%;
+}
+
+@keyframes skeleton-pulse {
+  from {
+    opacity: 0.45;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* SKELETON LOADING PLAYER */
+
+.player__skeleton,
+.player__skeleton-line,
+.player__skeleton-cover-small,
+.player__skeleton-audio-line,
+.player__skeleton-circle,
+.player__skeleton-play,
+.player__skeleton-progress {
+  background: #e5e7eb;
+  border-radius: 8px;
+  animation: skeleton-pulse 1.2s ease-in-out infinite alternate;
+}
+
+.player__skeleton {
+  max-width: 700px;
+  margin: 72px auto 140px;
+  padding: 32px 0;
+  background: transparent;
+}
+
+.player__skeleton-line {
+  height: 18px;
+  margin-bottom: 18px;
+}
+
+.player__skeleton-title {
+  height: 32px;
+  width: 80%;
+  margin: 0 auto 40px;
+}
+
+.player__skeleton-short {
+  width: 70%;
+}
+
+.player__skeleton-shorter {
+  width: 50%;
+}
+
+.player__skeleton-cover-small {
+  width: 48px;
+  height: 64px;
+}
+
+.player__skeleton-audio-line {
+  width: 180px;
+  height: 14px;
+  margin-bottom: 8px;
+}
+
+.player__skeleton-audio-short {
+  width: 110px;
+}
+
+.player__skeleton-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.player__skeleton-play {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.player__skeleton-progress {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+}
+
+/* SKELETON LOADING FOR-YOU */
+
+.for-you__skeleton-line,
+.for-you__skeleton-cover,
+.for-you__skeleton-book-img {
+  background: #e5e7eb;
+  border-radius: 8px;
+  animation: skeleton-pulse 1.2s ease-in-out infinite alternate;
+}
+
+.for-you__skeleton-line {
+  height: 16px;
+  margin-bottom: 12px;
+}
+
+.for-you__skeleton-heading {
+  width: 220px;
+  height: 26px;
+  margin-bottom: 24px;
+}
+
+.for-you__skeleton-subheading {
+  width: 180px;
+  margin-bottom: 24px;
+}
+
+.for-you__selected-skeleton {
+  pointer-events: none;
+}
+
+.for-you__skeleton-selected-text {
+  width: 240px;
+  height: 80px;
+}
+
+.for-you__skeleton-cover {
+  width: 140px;
+  height: 200px;
+}
+
+.for-you__skeleton-title {
+  width: 180px;
+  height: 22px;
+}
+
+.for-you__skeleton-author {
+  width: 120px;
+}
+
+.for-you__skeleton-time {
+  width: 140px;
+}
+
+.for-you__book-skeleton {
+  pointer-events: none;
+}
+
+.for-you__skeleton-book-img {
+  width: 100%;
+  height: 180px;
+  margin-bottom: 12px;
+}
+
+.for-you__skeleton-short {
+  width: 60%;
+}
+
+.for-you__skeleton-medium {
+  width: 80%;
 }
