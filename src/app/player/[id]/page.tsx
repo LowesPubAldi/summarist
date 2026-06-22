@@ -32,6 +32,7 @@ export default function PlayerPage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [fontSize, setFontSize] = useState(16);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -114,6 +115,8 @@ export default function PlayerPage() {
     <div className="player">
       <Sidebar
         showFontControls
+        fontSize={fontSize}
+        setFontSize={setFontSize}
         onLoginClick={() => setIsModalOpen(true)}
       />
 
@@ -135,7 +138,9 @@ export default function PlayerPage() {
           <div className="player__title">
             <h1>{book.title}</h1>
 
-            <p>{book.summary || book.bookDescription}</p>
+            <p className="player__summary">
+              {book.summary || book.bookDescription}
+            </p>
           </div>
         )}
 
@@ -148,6 +153,12 @@ export default function PlayerPage() {
           window.location.reload();
           }}
           />
+
+        <style jsx>{`
+          .player__summary {
+            font-size: ${fontSize}px;
+          }
+        `}</style>
       </main>
 
       {isLoggedIn && (
@@ -176,7 +187,11 @@ export default function PlayerPage() {
           </div>
 
           <div className="audio-player__controls">
-            <button onClick={() => skipAudio(-10)}>10</button>
+            <button 
+              className="audio-player__skip"
+              onClick={() => skipAudio(-10)}>
+              10
+              </button>
 
             <button className="audio-player__play" onClick={handlePlayPause}>
               {isPlaying ? "❚❚" : "▶"}

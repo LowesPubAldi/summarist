@@ -17,11 +17,15 @@ import { useRouter } from "next/navigation";
 type SidebarProps = {
   showFontControls?: boolean;
   onLoginClick?: () => void;
+  fontSize?: number;
+  setFontSize?: React.Dispatch<React.SetStateAction<number>>;
 };
 
 export default function Sidebar({
   showFontControls = false,
   onLoginClick,
+  fontSize,
+  setFontSize,
 }: SidebarProps) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
@@ -76,10 +80,10 @@ export default function Sidebar({
 
       {showFontControls && (
     <div className="sidebar__font-size">
-       <button>Aa</button>
-       <button>Aa</button>
-       <button>Aa</button>
-       <button>Aa</button>
+       <button onClick={() => setFontSize?.(14)}>Aa</button>
+       <button onClick={() => setFontSize?.(16)}>Aa</button>
+       <button onClick={() => setFontSize?.(18)}>Aa</button>
+       <button onClick={() => setFontSize?.(20)}>Aa</button>
     </div>
     )}
 
