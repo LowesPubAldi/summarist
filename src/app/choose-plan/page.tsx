@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { initFirebase } from "../firebase";
 import { useRouter } from "next/navigation"
-import { FiChevronDown, FiChevronUp } from "react-icons/fi";
+import { FaChevronCircleDown, FaChevronCircleUp } from "react-icons/fa";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import PaymentModal from "../components/PaymentModal";
 import { getCheckoutUrl } from "./stripePayment";
@@ -163,9 +163,9 @@ export default function ChoosePlanPage() {
 
         <span>
           {openFaq === index ? (
-         <FiChevronUp />
+         <FaChevronCircleUp />
             ) : (
-         <FiChevronDown />
+         <FaChevronCircleDown />
             )}
         </span>
             </button>

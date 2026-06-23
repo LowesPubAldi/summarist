@@ -6,7 +6,8 @@ import Modal from "../../components/Modal";
 import Sidebar from "@/app/components/Sidebar";
 import Searchbar from "@/app/components/Searchbar";
 import { MdReplay10, MdForward10 } from "react-icons/md";
-import { FaPlay, FaPause } from "react-icons/fa";
+import { FaPause } from "react-icons/fa";
+import { FaCirclePlay } from "react-icons/fa6";
 
 type Book = {
   id: string;
@@ -253,7 +254,7 @@ export default function PlayerPage() {
           </button>
 
           <button className="audio-player__play" onClick={handlePlayPause}>
-            {isPlaying ? <FaPause /> : <FaPlay />}
+            {isPlaying ? <FaPause /> : <FaCirclePlay />}
           </button>
 
           <button

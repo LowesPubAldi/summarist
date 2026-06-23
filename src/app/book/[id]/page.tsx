@@ -5,8 +5,8 @@ import Searchbar from "@/app/components/Searchbar";
 import Modal from "@/app/components/Modal";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
-import { HiOutlineBookOpen, HiOutlinePlay } from "react-icons/hi";
+import { FaBookmark, FaRegBookmark } from "react-icons/fa";
+import { IoBookOutline, IoPlayOutline } from "react-icons/io5";
 
 type Book = {
   id: string;
@@ -206,18 +206,18 @@ export default function BookPage() {
 
             <div className="book__buttons">
               <button onClick={handleReadClick}>
-                <HiOutlineBookOpen />
+                <IoBookOutline />
                 Read
               </button>
 
               <button onClick={handleListenClick}>
-                <HiOutlinePlay />
+                <IoPlayOutline />
                 Listen
               </button>
             </div>
 
             <p className="book__library" onClick={handleLibraryClick}>
-              {isSaved ? <BsBookmarkFill /> : <BsBookmark />}
+              {isSaved ? <FaRegBookmark /> : <FaBookmark />}
               {isSaved ? " Saved in My Library" : " Add title to My Library"}
             </p>
           </div>

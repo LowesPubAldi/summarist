@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { FaUser } from "react-icons/fa";
+import { FaUserAlt } from "react-icons/fa"
 
 type ModalProps = {
   isOpen: boolean;
@@ -60,7 +60,7 @@ export default function Modal({
 
         <button className="modal__guest" onClick={handleGuestLogin}>
           <span className="modal__guest-icon">
-            <FaUser />
+            <FaUserAlt />
           </span>
           Login as a Guest
         </button>

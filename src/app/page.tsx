@@ -1,14 +1,15 @@
 "use client"
 
 import {
-  AiFillFileText,
-  AiFillBulb,
-  AiFillAudio
-} from "react-icons/ai";
+  HiDocumentText,
+  HiLightBulb,
+  HiSpeakerWave,
+} from "react-icons/hi2";
 
-import { BiCrown } from "react-icons/bi";
 import { RiLeafLine } from "react-icons/ri";
-import { FaStar, FaStarHalfAlt } from "react-icons/fa";
+import { FaStar } from "react-icons/fa6";
+import { FaStarHalfAlt } from "react-icons/fa";
+import { FaCrown } from "react-icons/fa6";
 import { useEffect, useState } from "react";
 import Modal from "./components/Modal";
 
@@ -106,7 +107,7 @@ const secondStats = [
           <div className="features__wrapper">
             <div className="features">
               <div className="features__icon">
-                <AiFillFileText />
+                <HiDocumentText />
               </div>
               <div className="features__title">Read or listen</div>
               <div className="features__sub--title">
@@ -115,7 +116,7 @@ const secondStats = [
             </div>
             <div className="features">
               <div className="features__icon">
-                <AiFillBulb />
+                <HiLightBulb />
               </div>
               <div className="features__title">Find your next read</div>
               <div className="features__sub--title">
@@ -124,7 +125,7 @@ const secondStats = [
             </div>
             <div className="features">
               <div className="features__icon">
-                <AiFillAudio />
+                <HiSpeakerWave />
               </div>
               <div className="features__title">Briefcasts</div>
               <div className="features__sub--title">
@@ -294,7 +295,7 @@ const secondStats = [
           <div className="numbers__wrapper">
             <div className="numbers">
               <div className="numbers__icon">
-                <BiCrown />
+                <FaCrown />
               </div>
               <div className="numbers__title">3 Million</div>
               <div className="numbers__sub--title">Downloads on all platforms</div>
