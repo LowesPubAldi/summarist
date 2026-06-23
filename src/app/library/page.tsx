@@ -89,10 +89,20 @@ export default function LibraryPage() {
                 )}
               </section>
 
-              <section>
+            <section className="library__finished">
                 <h2>Finished</h2>
                 <p>0 items</p>
-              </section>
+
+              <div className="library__finished-empty">
+                <h3>Done and dusted!</h3>
+                <p>
+                  When you finish a book,
+                  <br />
+                  you can find it here later.
+                  </p>
+              </div>
+          </section>
+
             </div>
           ) : (
             <div className="library__card">
