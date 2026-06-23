@@ -525,13 +525,6 @@ button:disabled {
     display: none;
   }
 
-
-@media (max-width: 576px) {
-  .nav__list--mobile {
-    display: none;
-  }
-}
-
 /* PLAYER */
 
 .player {
@@ -610,9 +603,10 @@ button:disabled {
 }
 
 .searchbar__search {
-  width: 420px;
-  max-width: 100%;
   position: relative;
+  width: 420px;
+  max-width: 420px;
+
 }
 
 .searchbar__search input {
@@ -2348,10 +2342,6 @@ button:disabled {
 
 .searchbar__nav {
   padding: 12px 8px;
-}
-
-.searchbar__search {
-  width: 100%;
 }
 
 .searchbar__search input {
