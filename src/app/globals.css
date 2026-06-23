@@ -2256,7 +2256,6 @@ button:disabled {
   display: none;
 }
 
-
   .for-you__books {
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
