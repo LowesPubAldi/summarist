@@ -81,26 +81,40 @@ export default function BookPage() {
   }, [id]);
 
   const handleReadClick = () => {
-    const isPreviewBook = book?.status === "selected";
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
 
-    if (book?.subscriptionRequired && !isPreviewBook) {
-      router.push("/choose-plan");
-      return;
-    }
+  if (!isLoggedIn) {
+    setIsModalOpen(true);
+    return;
+  }
 
-    router.push(`/player/${id}`);
-  };
+  const isPreviewBook = book?.status === "selected";
 
-  const handleListenClick = () => {
-    const isPreviewBook = book?.status === "selected";
+  if (book?.subscriptionRequired && !isPreviewBook) {
+    router.push("/choose-plan");
+    return;
+  }
 
-    if (book?.subscriptionRequired && !isPreviewBook) {
-      router.push("/choose-plan");
-      return;
-    }
+  router.push(`/player/${id}`);
+};
 
-    router.push(`/player/${id}`);
-  };
+const handleListenClick = () => {
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+  if (!isLoggedIn) {
+    setIsModalOpen(true);
+    return;
+  }
+
+  const isPreviewBook = book?.status === "selected";
+
+  if (book?.subscriptionRequired && !isPreviewBook) {
+    router.push("/choose-plan");
+    return;
+  }
+
+  router.push(`/player/${id}`);
+};
 
   const handleLibraryClick = () => {
     if (!isLoggedIn) {
