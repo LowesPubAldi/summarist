@@ -775,7 +775,7 @@ button:disabled {
   background: transparent;
   color: #032b41;
   cursor: pointer;
-  padding-bottom: 6;
+  padding-bottom: 6px;
 }
 
 .sidebar__font-size button:nth-child(1) {
@@ -961,7 +961,7 @@ button:disabled {
   margin: 0 auto;
   align-items: center;
   justify-content: center;
-  transform: translateX(20);
+  transform: translateX(20px);
 }
 
 .modal__guest,
@@ -1013,7 +1013,7 @@ button:disabled {
   font-size: 32px;
   display: flex;
   align-items: center;
-  transform: translateX(-24) ;
+  transform: translateX(-24pm) ;
 }
 
 .modal__google {
