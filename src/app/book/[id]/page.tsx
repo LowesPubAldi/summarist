@@ -61,6 +61,7 @@ export default function BookPage() {
         }
 
         const data: Book = JSON.parse(text);
+
         setBook(data);
 
         const savedBooks: Book[] = JSON.parse(
@@ -199,21 +200,21 @@ const handleListenClick = () => {
   return (
     <div className="book">
       <Sidebar onLoginClick={() => setIsModalOpen(true)} />
+    <main className="book__content">
+      <Searchbar />
 
-      <main className="book__content">
-        <Searchbar />
-
-        <section className="book__hero">
-          <div className="book__details">
+      <div className="book__inner">
+        <section className="book__main">
+          <div className="book__top">
             <h1>{book.title}</h1>
             <p>{book.author}</p>
             <h2>{book.subTitle}</h2>
 
-            <div className="book__stats">
+            <div className="book__details">
               <div>
                 ⭐ {book.averageRating} ({book.totalRating} ratings)
               </div>
-              <div>⏱ {book.totalDuration || "4:52"}</div>
+              <div>⏱ {book.totalDuration} </div>
               <div>🎙 Audio & Text</div>
               <div>💡 {book.keyIdeas} Key ideas</div>
             </div>
@@ -228,10 +229,10 @@ const handleListenClick = () => {
                 <IoPlayOutline />
                 Listen
               </button>
-            </div>
+            </div>   
 
             <p className="book__library" onClick={handleLibraryClick}>
-              {isSaved ? <FaRegBookmark /> : <FaBookmark />}
+              {isSaved ? <FaBookmark /> : <FaRegBookmark />}
               {isSaved ? " Saved in My Library" : " Add title to My Library"}
             </p>
           </div>
@@ -255,7 +256,8 @@ const handleListenClick = () => {
           <h3>About the author</h3>
           <p>{book.authorDescription}</p>
         </section>
-      </main>
+      </div>
+    </main>
 
       <Modal
         isOpen={isModalOpen}
