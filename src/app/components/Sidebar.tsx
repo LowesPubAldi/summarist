@@ -9,6 +9,8 @@ import {
   HiOutlineQuestionMarkCircle,
   HiOutlineLogin,
   HiOutlineLogout,
+  HiMenu,
+  HiX,
 } from "react-icons/hi";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -28,6 +30,7 @@ export default function Sidebar({
   setFontSize,
 }: SidebarProps) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isSidebarOpen, setIsSiderOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -47,7 +50,24 @@ export default function Sidebar({
   };
 
   return (
-    <aside className="sidebar">
+    <>
+    <button 
+      className="sidebar__toggle"
+      onClick={() => setIsSiderOpen(!isSidebarOpen)}
+      aria-label="Toggle sidebar"
+    >
+      {isSidebarOpen ? <HiX /> : <HiMenu />}
+    </button>  
+
+    <div 
+      className={`sidebar__overlay ${
+        isSidebarOpen ? "sidebar__overlay--open" : ""
+        }`}
+        onClick={() => setIsSiderOpen(false)}
+      />
+      
+      <aside className={`sidebar ${isSidebarOpen ? "sidebar--open" : ""}`}>
+
       <div className="sidebar__logo">
         <img src="/logo.png" alt="Summarist" />
       </div>
@@ -129,5 +149,6 @@ export default function Sidebar({
         </li>
       </ul>
     </aside>
+    </>
   );
 }
