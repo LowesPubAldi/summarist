@@ -73,10 +73,22 @@ export default function LibraryPage() {
                       >
                         <img src={book.imageLink} alt={book.title} />
 
-                        <div>
-                          <h3>{book.title}</h3>
-                          <p>{book.author}</p>
-                          <p>{book.subTitle}</p>
+                        <div className="library__book-info">
+                            <h3>{book.title}</h3>
+                            <p>{book.author}</p>
+                            <p>{book.subTitle}</p>
+
+                          <p className="library__rating">
+                            ⭐ {book.averageRating}
+                          </p>
+
+                          <p className="library__duration">
+                            ⏱ {book.totalDuration}
+                          </p>
+
+                          <p className="library__subtitle">
+                            {book.subTitle}
+                          </p>
                         </div>
                       </Link>
                     ))}
