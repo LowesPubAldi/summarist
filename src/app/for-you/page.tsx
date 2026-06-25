@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Sidebar from "@/app/components/Sidebar";
 import Searchbar from "@/app/components/Searchbar";
 import Modal from "@/app/components/Modal";
+import { IoPlayCircle } from "react-icons/io5";
 import Link from "next/link";
 
 type Book = {
@@ -154,7 +155,7 @@ export default function ForYouPage() {
                 <p>{selectedBook.author}</p>
 
                 <div className="selected-book__time">
-                  <button>▶</button>
+                  <IoPlayCircle className="selected-book__play" />
                   <span>3 mins 23 secs</span>
                 </div>
               </div>
