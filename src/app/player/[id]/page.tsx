@@ -197,9 +197,13 @@ export default function PlayerPage() {
           <div className="player__title">
             <h1>{book.title}</h1>
 
-            <p className="player__summary">
-              {book.summary || book.bookDescription}
-            </p>
+            <div className="player__summary">
+              {(book.summary || book.bookDescription || "")
+                .split(/\n\s*\n/)
+                .map((paragraph, index) => (
+                  <p key={index}>{paragraph.trim()}</p>
+                ))}
+            </div>
           </div>
         )}
 

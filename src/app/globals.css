@@ -552,6 +552,7 @@ button:disabled {
   margin: 0 0 48px;
   border-bottom: 1px solid #e5e7eb;
   text-align: center;
+  font-size: 24px;
 }
 
 .player__title img {
@@ -586,9 +587,16 @@ button:disabled {
 .player__summary {
   max-width: 700px;
   width: 100%;
-  line-height: 1.7;
 }
 
+.player__summary p {
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+
+.player__summary p:last-child {
+  margin-bottom: 0;
+}
 /* SEARCHBAR */
 
 .searchbar__nav {
@@ -697,9 +705,13 @@ button:disabled {
 .sidebar {
   width: 200px;
   min-width: 200px;
+  height: 100vh;
   padding: 32px 24px;
   border-right: 1px solid #e5e7eb;
   background-color: #f8f7f8f7;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
 }
 
 .sidebar__logo {
@@ -726,7 +738,7 @@ button:disabled {
 }
 
 .sidebar__menu li:last-child {
-  margin-bottom: 250px;
+  margin-bottom: 0;
 }
 
 .sidebar__menu a {
@@ -738,7 +750,7 @@ button:disabled {
 }
 
 .sidebar__menu svg {
-  font-size: 20px;
+  font-size: 24px;
 }
 
 .sidebar__login {
@@ -794,6 +806,32 @@ button:disabled {
 
 .sidebar__overlay {
   display: none;
+}
+
+/* PLAYER ONLY SIDEBAR */
+
+.player .sidebar__logo {
+  margin-bottom: 64px;
+}
+
+.player .sidebar__menu li {
+  margin-bottom: 30px;
+}
+
+.player .sidebar__menu li:last-child {
+  margin-bottom: 80px;
+}
+
+.player .sidebar__menu svg {
+  font-size: 24px;
+}
+
+.player .sidebar__font-size {
+  margin: 36px 0;
+}
+
+.player .sidebar {
+  padding-top: 24px;
 }
 
 /* BOOK */
@@ -2440,38 +2478,10 @@ button:disabled {
   min-width: 0;
 }
 
-.page__inner {
-  max-width: 270px;
+  .page__inner {
+    max-width: 270px;
 }
-
- .player {
-    height: 200vh;
-    overflow: visible;
-  }
-
-  .player__content {
-    padding-bottom: 0;
-  }
-
-  .player__title {
-    height: 28px;
-    overflow: hidden;
-  }
-
-  .player__title h1,
-  .player__summary {
-    display: none;
-}
-
-  .audio-player {
-    position: static;
-    width: calc(100% - 80px);
-    margin-left: 80px;
-    min-height: 220px;
-    padding: 20px 24px;
-  }
-
-   .book__content {
+  .book__content {
     padding-top: 0;
   }
 }
@@ -2770,4 +2780,75 @@ button:disabled {
 .for-you__book {
     max-width: 140px;
 }
+}
+
+/* PLAYER PAGE RESPONSIVENESS 768 */
+
+@media (max-width: 768px) {
+  .player .searchbar__nav {
+    height: 80px;
+    min-height: 80px;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 16px 80px 0 16px;
+    position: relative;
+    z-index: 60;
+  }
+
+  .player .searchbar__search {
+    width: 300px;
+    max-width: 300px;
+}
+
+  .player__content {
+    position: relative;
+    padding-bottom: 200px;
+    overflow-y: auto;
+  }
+
+  .audio-player {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 180px;
+    min-height: 180px;
+    padding: 32px 24px 16px;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    grid-template-columns: none;
+  }
+
+    .audio-player__book {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .audio-player__book img {
+    width: 52px;
+  }
+
+  .audio-player__controls {
+    margin-bottom: 16px;
+  }
+
+  .audio-player__progress {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+}
+
+/* PLAYER MAIN 375 */
+  @media (max-width: 400px) {
+    .audio-player__progress {
+    max-width: 300px;
+    gap: 12px;
+    padding: 0 24px 0;
+    transform: translateY(-8px);
+  }
 }
