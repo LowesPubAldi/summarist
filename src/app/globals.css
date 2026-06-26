@@ -612,7 +612,7 @@ button:disabled {
 }
 
 .searchbar__search {
-  width: 400px;
+  width: 360px;
   max-width: 100%;
   position: relative;
 }
@@ -703,12 +703,14 @@ button:disabled {
 /* SIDEBAR */
 
 .sidebar {
+  display: flex;
+  flex-direction: column;
   width: 200px;
   min-width: 200px;
   height: 100vh;
-  padding: 32px 24px;
+  padding: 24px 24px 32px;
   border-right: 1px solid #e5e7eb;
-  background-color: #f8f7f8f7;
+  background-color: white;
   position: sticky;
   top: 0;
   align-self: flex-start;
@@ -716,7 +718,7 @@ button:disabled {
 
 .sidebar__logo {
   width: 140px;
-  margin-bottom: 72px;
+  margin-bottom: 64px;
 }
 
 .sidebar__logo img{
@@ -724,7 +726,10 @@ button:disabled {
 }
 
 .sidebar__menu {
+  display: flex;
   list-style: none;
+  flex-direction: column;
+  height: 100%;
   padding: 0;
   margin: 0;
 }
@@ -737,16 +742,20 @@ button:disabled {
   cursor: pointer;
 }
 
-.sidebar__menu li:last-child {
-  margin-bottom: 0;
+.sidebar__menu:last-of-type {
+  margin-top: 200px;
 }
 
 .sidebar__menu a {
   display: flex;
   align-items: center;
   gap: 12px;
-  text-decoration: none;
-  color: inherit;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.sidebar__menu a:hover {
+  background-color: #f3f4f6;
 }
 
 .sidebar__menu svg {
@@ -807,6 +816,8 @@ button:disabled {
 .sidebar__overlay {
   display: none;
 }
+
+
 
 /* PLAYER ONLY SIDEBAR */
 
@@ -1896,10 +1907,9 @@ button:disabled {
 
 .for-you {
   flex: 1;
-  padding: 0 64px 40px 120px; 
+  padding: 8px 40px 64px 120px; 
   max-width: 1200px;
   margin: 0;
-  padding-bottom: 40px;
 }
 
 .selected-book {
@@ -2016,6 +2026,7 @@ button:disabled {
 
 .for-you__recommended {
   display: block;
+  margin-bottom: 56px;
 }
 
 .for-you__recommended h2 {
@@ -2478,10 +2489,7 @@ button:disabled {
   min-width: 0;
 }
 
-  .page__inner {
-    max-width: 270px;
-}
-  .book__content {
+.book__content {
     padding-top: 0;
   }
 }
@@ -2567,21 +2575,21 @@ button:disabled {
     min-height: 80px;
     height: 80px;
     justify-content: flex-end;
-    padding: 0 56px 20px 16px;
+    padding: 0 32px 20px 16px;
   }
 
   .library .searchbar__search {
-    width: 320px;
-    max-width: 320px;
+    width: 300px;
+    max-width: 300px;
   }
 }
 
-
 /* FOR-YOU PAGE RESPONSIVENESS 768 */
-@media (max-width: 768px) {
+@media (max-width: 800px) {
     .for-you {
       width: 100%;
       max-width: 100%;
+      padding: 16px 24px 0 24px;
       overflow-x: hidden;
   }  
 
@@ -2598,17 +2606,18 @@ button:disabled {
       justify-content: flex-end;
       align-items: center;
       padding: 16px 24px 0 16px;
+      transform: translateX(-56px);
   } 
 
     .for-you .searchbar__search {
-      width: 320px;
-      max-width: 320px;
+      width: 300px;
+      max-width: 300px;
   }
 
     .for-you__books {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 24px;
+      gap: 16px;
   }
 
     .for-you__selected,
@@ -2672,18 +2681,20 @@ button:disabled {
     overflow: hidden;
   }
 
-  .for-you__book {
-    max-width: 145px;
-}
+  .for-you .for-you__book {
+    width: 140px;
+    padding: 8px;
+    border-radius: 6px;
+    background: #fff;
+    transition: background-color 0.2s ease;
+  }
 
-  .for-you__book img {
-    width: 100%;
-    max-width: 120px;
-    margin: 0 auto;
-}
+  .for-you .for-you__book:hover {
+    background: #f3f4f6;
+  }
 
   .for-you__book:nth-child(n + 5) {
-    display: none;
+      display: none;
   }
 }
 
@@ -2694,18 +2705,18 @@ button:disabled {
     width: 100%;
     padding: 0 16px 24px 16px;
     margin: 0;
+    padding-top: 12px;
   }
 
   .for-you .searchbar__nav {
     height: 80px;
     min-height: 80px;
-    justify-content: flex-start;
-    padding: 20px 64px 0 16px;
+    padding: 20px 64px 8px 16px;
   }
 
   .for-you .searchbar__search {
     width: 100%;
-    max-width: none;
+    max-width: 250px;
   }
 
   .for-you .searchbar__search input {
@@ -2780,6 +2791,12 @@ button:disabled {
 .for-you__book {
     max-width: 140px;
 }
+
+.for-you .for-you__book {
+    width: 140px;
+    padding: 8px;
+    border-radius: 6px;
+  }
 }
 
 /* PLAYER PAGE RESPONSIVENESS 768 */
@@ -2792,7 +2809,7 @@ button:disabled {
     align-items: center;
     padding: 16px 80px 0 16px;
     position: relative;
-    z-index: 60;
+    z-index: 1000;
   }
 
   .player .searchbar__search {
@@ -2852,3 +2869,18 @@ button:disabled {
     transform: translateY(-8px);
   }
 }
+
+/* FOR-YOU DESKTOP SEARCHBAR */
+@media (max-width: 801px) {
+.for-you .searchbar__nav {
+  justify-content: flex-end;
+  padding: 16px 8px 16px 32px;
+}
+
+.for-you .searchbar__search {
+  width: 360px;
+}
+}
+
+
+
