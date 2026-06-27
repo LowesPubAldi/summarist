@@ -729,7 +729,6 @@ button:disabled {
   display: flex;
   list-style: none;
   flex-direction: column;
-  height: 100%;
   padding: 0;
   margin: 0;
 }
@@ -817,7 +816,6 @@ button:disabled {
   display: none;
 }
 
-
 /* PLAYER ONLY SIDEBAR */
 
 .player .sidebar__logo {
@@ -829,7 +827,7 @@ button:disabled {
 }
 
 .player .sidebar__menu li:last-child {
-  margin-bottom: 80px;
+  margin-bottom: 60px;
 }
 
 .player .sidebar__menu svg {
@@ -837,12 +835,17 @@ button:disabled {
 }
 
 .player .sidebar__font-size {
-  margin: 36px 0;
+  margin: 24px 0 20px;
 }
 
 .player .sidebar {
-  padding-top: 24px;
+  padding-top: 8px;
 }
+
+.player .sidebar__menu:last-of-type {
+  margin-top: 16px;
+}
+
 
 /* BOOK */
 
@@ -1444,8 +1447,6 @@ button:disabled {
   width: 400px;
   margin-bottom: 32px;
 }
-
-
 
 /* SALES PAGE */
 
@@ -2322,42 +2323,6 @@ button:disabled {
   }
 }
 
-/* SEARCHBAR RESPONSIVE */
-
-@media (max-width: 768px) {
-  .searchbar__nav {
-    justify-content: center;
-    padding: 16px 72px 16px 16px;
-  }
-
-  .searchbar__search {
-    width: 360px;
-    max-width: 100%;
-  }
-}
-
-@media (max-width: 375px) {
-  .searchbar__nav {
-    justify-content: center;
-    padding: 16px 64px 16px 16px;
-  }
-
-  .searchbar__search {
-    width: 240px;
-    max-width: 100%;
-  }
-
-  .searchbar__search input {
-    height: 44px;
-    font-size: 14px;
-    padding: 0 44px 0 14px;
-  }
-
-  .searchbar__icon {
-    height: 44px;
-  }
-}
-
 /* RESPONSIVE */
 
 @media (max-width: 1024px) {
@@ -2938,5 +2903,3 @@ button:disabled {
     justify-content: start;
 }
 }
-
-
