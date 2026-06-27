@@ -2903,3 +2903,29 @@ button:disabled {
     justify-content: start;
 }
 }
+
+/* SETTINGS 768 RESPONSIVESNESS */
+
+@media (max-width: 800px) {
+  .settings .searchbar__nav {
+    padding: 8px 24px 72px 24px;
+  }
+}
+
+/* SETTINGS 375 RESPONSIVENESS */
+  @media (max-width: 400px) {
+  .settings .searchbar__nav {
+    justify-content: flex-start;
+    padding: 0 24px 64px 16px;
+  }
+
+  .settings .searchbar__search {
+    width: 220px;
+    max-width: 220px;
+  }
+
+  .settings .sidebar__toggle {
+      right: 8px;
+      top: 32px;     
+  }
+}
