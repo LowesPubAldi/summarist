@@ -179,7 +179,8 @@
 }
 
 :global(.faq__answer-wrapper--open) {
-  max-height: 220px;
+  max-height: none;
+  overflow: visible;
   opacity: 1;
 }
 
@@ -188,7 +189,7 @@
   font-size: 20px;
   line-height: 1.5;
   color: #394547;
-  overflow: hidden;
+  overflow: visible;
   animation: faqOpen 400ms ease;
 }
 
@@ -272,6 +273,25 @@
   background: #021e2d;
 }
 
+:global(.payment-modal__buttons button:disabled) {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+:global(.payment-modal__error) {
+  margin: 4px 0 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #c81e1e;
+}
+
+:global(.payment-modal__tooltip) {
+  margin: 4px 0 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #6b757b;
+}
+
 :global(.payment-modal h1) {
   font-size: 32px;
   margin-bottom: 12px;
@@ -328,5 +348,61 @@
 
   :global(.faq__answer) {
     font-size: 16px;
+  }
+}
+
+@media (max-width: 375px) {
+  :global(.faq) {
+    padding-bottom: 96px;
+  }
+
+  :global(.faq__answer) {
+    margin-top: 0;
+    padding: 0 6px 8px 0;
+    font-size: 15px;
+    line-height: 1.4;
+  }
+
+  :global(.faq__answer-wrapper--open) {
+    display: block;
+    max-height: 180px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-top: 12px;
+  }
+
+  :global(.faq__answer-wrapper--open::-webkit-scrollbar) {
+    width: 6px;
+  }
+
+  :global(.faq__answer-wrapper--open::-webkit-scrollbar-thumb) {
+    background: #bac8ce;
+    border-radius: 999px;
+  }
+
+  :global(.faq__answer-wrapper--open::-webkit-scrollbar-track) {
+    background: transparent;
+  }
+
+  :global(.faq__answer-wrapper:not(.faq__answer-wrapper--open)) {
+    display: none;
+    max-height: none;
+    overflow: visible;
+    opacity: 1;
+    transition: none;
+  }
+}
+
+@media (max-width: 375px) and (max-height: 500px) {
+  :global(.plan__trial-wrapper) {
+    position: static;
+  }
+
+  :global(.faq) {
+    padding-bottom: 24px;
+  }
+
+  :global(.faq__answer-wrapper--open) {
+    max-height: 140px;
   }
 }

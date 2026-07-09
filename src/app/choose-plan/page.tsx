@@ -47,6 +47,8 @@ export default function ChoosePlanPage() {
 
   const yearlyPriceId = "price_1TkcG5FRRyhPU4nPN7nxBiWf";
   const monthlyPriceId = "price_1TkcF3FRRyhPU4nPP03MgsqT";
+  const checkoutUnavailableMessage =
+    "Checkout is unavailable at the moment on this platform";
 
   const upgradeToPremium = async () => {
     let user = auth.currentUser;
@@ -165,13 +167,11 @@ export default function ChoosePlanPage() {
         </span>
             </button>
 
-        <div
-          className={`faq__answer-wrapper ${
-          openFaq === index ? "faq__answer-wrapper--open" : ""
-          }`}
-          >
-          <p className="faq__answer">{faq.answer}</p>
-        </div>
+        {openFaq === index && (
+          <div className="faq__answer-wrapper faq__answer-wrapper--open">
+            <p className="faq__answer">{faq.answer}</p>
+          </div>
+        )}
           </div>
         ))}
         </section>
@@ -260,6 +260,8 @@ export default function ChoosePlanPage() {
           selectedPlan={selectedPlan}
           onContinue={upgradeToPremium}
           onBackHome={backToHome}
+          checkoutDisabled
+          unavailableMessage={checkoutUnavailableMessage}
         />
       </div>
     </section>

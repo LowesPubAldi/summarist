@@ -34,6 +34,14 @@ export const getCheckoutUrl = async (
   });
 
   return new Promise<string>((resolve, reject) => {
+    const timeoutId = window.setTimeout(() => {
+      reject(
+        new Error(
+          "Checkout setup timed out. Firebase/Stripe may not be configured for this environment."
+        )
+      );
+    }, 12000);
+
     const unsubscribe = onSnapshot(docRef, (snap) => {
       const data = snap.data() as {
         error?: { message: string };
@@ -41,11 +49,13 @@ export const getCheckoutUrl = async (
       };
 
       if (data?.error) {
+        window.clearTimeout(timeoutId);
         unsubscribe();
         reject(new Error(`An error occurred: ${data.error.message}`));
       }
 
       if (data?.url) {
+        window.clearTimeout(timeoutId);
         unsubscribe();
         resolve(data.url);
       }
