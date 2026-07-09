@@ -34,6 +34,87 @@ type Book = {
   authorDescription?: string;
 };
 
+type PlayerProgress = {
+  currentTime: number;
+  scrollY: number;
+  updatedAt: number;
+};
+
+type ReadingMode = "compact" | "expanded";
+
+const PLAYER_PROGRESS_KEY_PREFIX = "playerProgress:";
+const PLAYER_READING_MODE_KEY = "playerReadingMode";
+const PLAYER_PLAYBACK_RATE_KEY = "playerPlaybackRate";
+const PLAYBACK_SPEEDS = [1, 1.25, 1.5, 1.75, 2] as const;
+
+const getReadableParagraphs = (value?: string): string[] => {
+  if (!value) {
+    return [];
+  }
+
+  const normalized = value.replace(/\r\n/g, "\n").trim();
+
+  if (!normalized) {
+    return [];
+  }
+
+  const explicitParagraphs = normalized
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+
+  if (explicitParagraphs.length > 1) {
+    return explicitParagraphs;
+  }
+
+  const sentenceMatches = normalized.match(/[^.!?]+[.!?]+(?:\s|$)|[^.!?]+$/g);
+  const sentences = (sentenceMatches ?? [])
+    .map((sentence) => sentence.trim())
+    .filter(Boolean);
+
+  if (sentences.length < 3) {
+    return [normalized];
+  }
+
+  const groupedParagraphs: string[] = [];
+
+  for (let index = 0; index < sentences.length; index += 2) {
+    groupedParagraphs.push(sentences.slice(index, index + 2).join(" "));
+  }
+
+  return groupedParagraphs;
+};
+
+const getPlayerProgressKey = (bookId: string) =>
+  `${PLAYER_PROGRESS_KEY_PREFIX}${bookId}`;
+
+const readPlayerProgress = (bookId: string): PlayerProgress | null => {
+  const raw = localStorage.getItem(getPlayerProgressKey(bookId));
+
+  if (!raw) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(raw) as Partial<PlayerProgress>;
+
+    const currentTime = Number(parsed.currentTime);
+    const scrollY = Number(parsed.scrollY);
+
+    if (!Number.isFinite(currentTime) || !Number.isFinite(scrollY)) {
+      return null;
+    }
+
+    return {
+      currentTime,
+      scrollY,
+      updatedAt: Number(parsed.updatedAt) || Date.now(),
+    };
+  } catch {
+    return null;
+  }
+};
+
 export default function PlayerPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [book, setBook] = useState<Book | null>(null);
@@ -41,12 +122,19 @@ export default function PlayerPage() {
   const [currentTime, setCurrentTime] = useState(0);
   const [loading, setLoading] = useState(true);
   const [duration, setDuration] = useState(0);
+  const [readingMode, setReadingMode] = useState<ReadingMode>("expanded");
+  const [hasLoadedReadingMode, setHasLoadedReadingMode] = useState(false);
+  const [playbackRate, setPlaybackRate] = useState<number>(1);
+  const [hasLoadedPlaybackRate, setHasLoadedPlaybackRate] = useState(false);
   const { isPremium, isSubscriptionLoading } = useSubscriptionStatus();
   const { isLoggedIn } = useAuthStatus();
   const { fontSize, setFontSize } = useReaderFontSize();
   const readerFontSizeClass = `reader-font-size-${fontSize}`;
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const hasRestoredAudioRef = useRef(false);
+  const hasRestoredScrollRef = useRef(false);
+  const lastPersistedSecondRef = useRef(-1);
 
   const params = useParams();
   const id = params.id as string;
@@ -92,6 +180,126 @@ export default function PlayerPage() {
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
+  const timeLeft = Math.max(duration - currentTime, 0);
+
+  const saveProgress = (overrides?: { currentTime?: number; scrollY?: number }) => {
+    if (!isLoggedIn || !book?.id) {
+      return;
+    }
+
+    const previous = readPlayerProgress(book.id);
+
+    const current =
+      overrides?.currentTime ??
+      previous?.currentTime ??
+      audioRef.current?.currentTime ??
+      currentTime;
+
+    const scrollY = overrides?.scrollY ?? previous?.scrollY ?? window.scrollY;
+
+    localStorage.setItem(
+      getPlayerProgressKey(book.id),
+      JSON.stringify({
+        currentTime: Number.isFinite(current) ? current : 0,
+        scrollY: Number.isFinite(scrollY) ? scrollY : 0,
+        updatedAt: Date.now(),
+      })
+    );
+  };
+
+  useEffect(() => {
+    hasRestoredAudioRef.current = false;
+    hasRestoredScrollRef.current = false;
+    lastPersistedSecondRef.current = -1;
+  }, [book?.id]);
+
+  useEffect(() => {
+    const storedMode = localStorage.getItem(PLAYER_READING_MODE_KEY);
+
+    if (storedMode === "compact" || storedMode === "expanded") {
+      setReadingMode(storedMode);
+    }
+
+    setHasLoadedReadingMode(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hasLoadedReadingMode) {
+      return;
+    }
+
+    localStorage.setItem(PLAYER_READING_MODE_KEY, readingMode);
+  }, [readingMode, hasLoadedReadingMode]);
+
+  useEffect(() => {
+    const storedRate = Number(localStorage.getItem(PLAYER_PLAYBACK_RATE_KEY));
+
+    if (PLAYBACK_SPEEDS.includes(storedRate as (typeof PLAYBACK_SPEEDS)[number])) {
+      setPlaybackRate(storedRate);
+    }
+
+    setHasLoadedPlaybackRate(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hasLoadedPlaybackRate) {
+      return;
+    }
+
+    localStorage.setItem(PLAYER_PLAYBACK_RATE_KEY, String(playbackRate));
+  }, [playbackRate, hasLoadedPlaybackRate]);
+
+  useEffect(() => {
+    if (!audioRef.current) {
+      return;
+    }
+
+    audioRef.current.playbackRate = playbackRate;
+  }, [playbackRate, book?.id]);
+
+  useEffect(() => {
+    if (!isLoggedIn || !book?.id || hasRestoredScrollRef.current) {
+      return;
+    }
+
+    const savedProgress = readPlayerProgress(book.id);
+    hasRestoredScrollRef.current = true;
+
+    if (!savedProgress) {
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: Math.max(0, savedProgress.scrollY), behavior: "auto" });
+    });
+  }, [isLoggedIn, book?.id]);
+
+  useEffect(() => {
+    if (!isLoggedIn || !book?.id) {
+      return;
+    }
+
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (ticking) {
+        return;
+      }
+
+      ticking = true;
+      requestAnimationFrame(() => {
+        saveProgress({ scrollY: window.scrollY });
+        ticking = false;
+      });
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isLoggedIn, book?.id]);
+
   const handlePlayPause = () => {
     if (!audioRef.current) return;
 
@@ -110,6 +318,7 @@ export default function PlayerPage() {
     const newTime = Number(e.target.value);
     audioRef.current.currentTime = newTime;
     setCurrentTime(newTime);
+    saveProgress({ currentTime: newTime });
   };
 
   const skipAudio = (seconds: number) => {
@@ -122,6 +331,16 @@ export default function PlayerPage() {
 
     audioRef.current.currentTime = newTime;
     setCurrentTime(newTime);
+    saveProgress({ currentTime: newTime });
+  };
+
+  const handleCyclePlaybackRate = () => {
+    const currentIndex = PLAYBACK_SPEEDS.indexOf(
+      playbackRate as (typeof PLAYBACK_SPEEDS)[number]
+    );
+
+    const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % PLAYBACK_SPEEDS.length;
+    setPlaybackRate(PLAYBACK_SPEEDS[nextIndex]);
   };
 
   if (loading) {
@@ -258,12 +477,34 @@ export default function PlayerPage() {
           <div className="player__title">
             <h1>{book.title}</h1>
 
-            <div className={`player__summary reader-font-target ${readerFontSizeClass}`}>
-              {(book.summary || book.bookDescription || "")
-                .split(/\n\s*\n/)
-                .map((paragraph, index) => (
-                  <p key={index}>{paragraph.trim()}</p>
-                ))}
+            <div className="player__reading-mode" role="group" aria-label="Reading mode">
+              <button
+                type="button"
+                className={readingMode === "compact" ? "is-active" : ""}
+                aria-pressed={readingMode === "compact"}
+                onClick={() => setReadingMode("compact")}
+              >
+                Compact
+              </button>
+
+              <button
+                type="button"
+                className={readingMode === "expanded" ? "is-active" : ""}
+                aria-pressed={readingMode === "expanded"}
+                onClick={() => setReadingMode("expanded")}
+              >
+                Expanded
+              </button>
+            </div>
+
+            <div
+              className={`player__summary player__summary--${readingMode} reader-font-target ${readerFontSizeClass}`}
+            >
+              {getReadableParagraphs(book.summary || book.bookDescription).map(
+                (paragraph, index) => (
+                  <p key={index}>{paragraph}</p>
+                )
+              )}
             </div>
           </div>
         )}
@@ -282,11 +523,49 @@ export default function PlayerPage() {
           src={book.audioLink}
           onLoadedMetadata={() => {
             if (!audioRef.current) return;
+
             setDuration(audioRef.current.duration);
+            audioRef.current.playbackRate = playbackRate;
+
+            if (!isLoggedIn || !book?.id || hasRestoredAudioRef.current) {
+              return;
+            }
+
+            const savedProgress = readPlayerProgress(book.id);
+            hasRestoredAudioRef.current = true;
+
+            if (!savedProgress) {
+              return;
+            }
+
+            const nextTime = Math.min(
+              Math.max(savedProgress.currentTime, 0),
+              audioRef.current.duration || 0
+            );
+
+            audioRef.current.currentTime = nextTime;
+            setCurrentTime(nextTime);
           }}
           onTimeUpdate={() => {
             if (!audioRef.current) return;
-            setCurrentTime(audioRef.current.currentTime);
+
+            const nextTime = audioRef.current.currentTime;
+            setCurrentTime(nextTime);
+
+            if (!isLoggedIn || !book?.id) {
+              return;
+            }
+
+            if (!hasRestoredAudioRef.current) {
+              return;
+            }
+
+            const nextSecond = Math.floor(nextTime);
+
+            if (nextSecond !== lastPersistedSecondRef.current) {
+              lastPersistedSecondRef.current = nextSecond;
+              saveProgress({ currentTime: nextTime });
+            }
           }}
           onEnded={() => setIsPlaying(false)}
         />
@@ -322,6 +601,15 @@ export default function PlayerPage() {
           >
             <MdForward10 />
           </button>
+
+          <button
+            type="button"
+            className="audio-player__speed"
+            aria-label="Cycle playback speed"
+            onClick={handleCyclePlaybackRate}
+          >
+            {playbackRate}x
+          </button>
         </div>
 
         <div className="audio-player__progress">
@@ -336,7 +624,10 @@ export default function PlayerPage() {
             aria-label="Audio progress"
           />
 
-          <span>{formatTime(duration)}</span>
+          <div className="audio-player__time-meta">
+            <span>{formatTime(duration)}</span>
+            <span className="audio-player__time-left">{formatTime(timeLeft)} left</span>
+          </div>
         </div>
       </div>
     </div>
