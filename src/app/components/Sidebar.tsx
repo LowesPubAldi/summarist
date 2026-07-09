@@ -61,7 +61,11 @@ export default function Sidebar({
         onClick={() => setIsSiderOpen(false)}
       />
       
-      <aside className={`sidebar ${isSidebarOpen ? "sidebar--open" : ""}`}>
+      <aside
+        className={`sidebar ${isSidebarOpen ? "sidebar--open" : ""} ${
+          showFontControls ? "sidebar--with-font-controls" : ""
+        }`}
+      >
 
       <div className="sidebar__logo">
         <Image src="/logo.png" alt="Summarist" width={160} height={36} />

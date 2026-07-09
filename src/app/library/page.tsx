@@ -32,12 +32,66 @@ type Book = {
 export default function LibraryPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [savedBooks, setSavedBooks] = useState<Book[]>([]);
+  const [resolvedDurations, setResolvedDurations] = useState<Record<string, number>>({});
   const { isLoggedIn } = useAuthStatus();
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setSavedBooks(JSON.parse(localStorage.getItem("savedBooks") || "[]"));
   }, []);
+
+  useEffect(() => {
+    const booksNeedingDuration = savedBooks.filter(
+      (book) => book.audioLink && !book.totalDuration
+    );
+
+    if (booksNeedingDuration.length === 0) {
+      return;
+    }
+
+    let isCancelled = false;
+    const cleanups: Array<() => void> = [];
+
+    booksNeedingDuration.forEach((book) => {
+      const audio = new Audio();
+
+      audio.preload = "metadata";
+      audio.src = book.audioLink || "";
+
+      const handleLoadedMetadata = () => {
+        if (isCancelled || Number.isNaN(audio.duration) || !Number.isFinite(audio.duration)) {
+          return;
+        }
+
+        setResolvedDurations((previous) => {
+          if (previous[book.id] != null) {
+            return previous;
+          }
+
+          return {
+            ...previous,
+            [book.id]: audio.duration,
+          };
+        });
+      };
+
+      audio.addEventListener("loadedmetadata", handleLoadedMetadata);
+
+      cleanups.push(() => {
+        audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+        audio.src = "";
+      });
+    });
+
+    return () => {
+      isCancelled = true;
+      cleanups.forEach((cleanup) => cleanup());
+    };
+  }, [savedBooks]);
+
+  const getDisplayDuration = (book: Book) => {
+    return book.totalDuration ?? resolvedDurations[book.id] ?? null;
+  };
 
   return (
     <div className={`${styles.page} library`}>
@@ -75,7 +129,7 @@ export default function LibraryPage() {
                           </p>
 
                           <p className="library__duration">
-                            ⏱ {formatDuration(book.totalDuration)}
+                            ⏱ {formatDuration(getDisplayDuration(book)) || "--:--"}
                           </p>
 
                           <p className="library__subtitle">

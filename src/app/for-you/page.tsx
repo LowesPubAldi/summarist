@@ -34,6 +34,7 @@ export default function ForYouPage() {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [recommendedBooks, setRecommendedBooks] = useState<Book[]>([]);
   const [suggestedBooks, setSuggestedBooks] = useState<Book[]>([]);
+  const [resolvedDurations, setResolvedDurations] = useState<Record<string, number>>({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -72,6 +73,63 @@ export default function ForYouPage() {
 
     getBooks();
   }, []);
+
+  useEffect(() => {
+    const books = [selectedBook, ...recommendedBooks, ...suggestedBooks].filter(
+      (book): book is Book => Boolean(book)
+    );
+
+    const booksNeedingDuration = books.filter(
+      (book) => book.audioLink && !book.totalDuration
+    );
+
+    if (booksNeedingDuration.length === 0) {
+      return;
+    }
+
+    let isCancelled = false;
+    const cleanups: Array<() => void> = [];
+
+    booksNeedingDuration.forEach((book) => {
+      const audio = new Audio();
+
+      audio.preload = "metadata";
+      audio.src = book.audioLink || "";
+
+      const handleLoadedMetadata = () => {
+        if (isCancelled || Number.isNaN(audio.duration) || !Number.isFinite(audio.duration)) {
+          return;
+        }
+
+        setResolvedDurations((previous) => {
+          if (previous[book.id] != null) {
+            return previous;
+          }
+
+          return {
+            ...previous,
+            [book.id]: audio.duration,
+          };
+        });
+      };
+
+      audio.addEventListener("loadedmetadata", handleLoadedMetadata);
+
+      cleanups.push(() => {
+        audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+        audio.src = "";
+      });
+    });
+
+    return () => {
+      isCancelled = true;
+      cleanups.forEach((cleanup) => cleanup());
+    };
+  }, [selectedBook, recommendedBooks, suggestedBooks]);
+
+  const getDisplayDuration = (book: Book) => {
+    return book.totalDuration ?? resolvedDurations[book.id] ?? null;
+  };
 
   if (loading) {
     return (
@@ -157,7 +215,7 @@ export default function ForYouPage() {
 
                 <div className="selected-book__time">
                   <IoPlayCircle className="selected-book__play" />
-                  <span>{formatDuration(selectedBook.totalDuration)}</span>
+                  <span>{formatDuration(getDisplayDuration(selectedBook)) || "--:--"}</span>
                 </div>
               </div>
             </Link>
@@ -182,8 +240,9 @@ export default function ForYouPage() {
                 <p>{book.author}</p>
                 <p>{book.subTitle}</p>
 
-                <div className="selected-book__time">
+                <div className="for-you__book-meta">
                   <span>⭐ {book.rating || "4.4"}</span>
+                  <span>⏱ {formatDuration(getDisplayDuration(book)) || "--:--"}</span>
                 </div>
               </Link>
             ))}
@@ -207,8 +266,9 @@ export default function ForYouPage() {
                 <p>{book.author}</p>
                 <p>{book.subTitle}</p>
 
-                <div className="selected-book__time">
+                <div className="for-you__book-meta">
                   <span>⭐ {book.rating || "4.4"}</span>
+                  <span>⏱ {formatDuration(getDisplayDuration(book)) || "--:--"}</span>
                 </div>
               </Link>
             ))}

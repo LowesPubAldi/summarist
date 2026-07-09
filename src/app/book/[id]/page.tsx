@@ -11,6 +11,7 @@ import { IoBookOutline, IoPlayOutline } from "react-icons/io5";
 import { useSubscriptionStatus } from "@/app/hooks/useSubscriptionStatus";
 import { formatDuration } from "@/app/utils/formatDuration";
 import { useAuthStatus } from "@/app/hooks/useAuthStatus";
+import { useReaderFontSize } from "@/app/hooks/useReaderFontSize";
 import styles from "./page.module.css";
 
 type Book = {
@@ -32,13 +33,54 @@ type Book = {
   authorDescription?: string;
 };
 
+const getReadableParagraphs = (value?: string): string[] => {
+  if (!value) {
+    return [];
+  }
+
+  const normalized = value.replace(/\r\n/g, "\n").trim();
+
+  if (!normalized) {
+    return [];
+  }
+
+  const explicitParagraphs = normalized
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+
+  if (explicitParagraphs.length > 1) {
+    return explicitParagraphs;
+  }
+
+  const sentenceMatches = normalized.match(/[^.!?]+[.!?]+(?:\s|$)|[^.!?]+$/g);
+  const sentences = (sentenceMatches ?? [])
+    .map((sentence) => sentence.trim())
+    .filter(Boolean);
+
+  if (sentences.length < 3) {
+    return [normalized];
+  }
+
+  const groupedParagraphs: string[] = [];
+
+  for (let index = 0; index < sentences.length; index += 2) {
+    groupedParagraphs.push(sentences.slice(index, index + 2).join(" "));
+  }
+
+  return groupedParagraphs;
+};
+
 export default function BookPage() {
   const [book, setBook] = useState<Book | null>(null);
+  const [resolvedDuration, setResolvedDuration] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [loading, setLoading] = useState(true);
   const { isPremium, isSubscriptionLoading } = useSubscriptionStatus();
   const { isLoggedIn } = useAuthStatus();
+  const { fontSize, setFontSize } = useReaderFontSize();
+  const readerFontSizeClass = `reader-font-size-${fontSize}`;
 
   const params = useParams();
   const router = useRouter();
@@ -80,10 +122,40 @@ export default function BookPage() {
     fetchData();
   }, [id]);
 
+  useEffect(() => {
+    if (!book?.audioLink || book.totalDuration) {
+      setResolvedDuration(null);
+      return;
+    }
+
+    let isCancelled = false;
+    const audio = new Audio();
+
+    audio.preload = "metadata";
+    audio.src = book.audioLink;
+
+    const handleLoadedMetadata = () => {
+      if (isCancelled || Number.isNaN(audio.duration) || !Number.isFinite(audio.duration)) {
+        return;
+      }
+
+      setResolvedDuration(audio.duration);
+    };
+
+    audio.addEventListener("loadedmetadata", handleLoadedMetadata);
+
+    return () => {
+      isCancelled = true;
+      audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+      audio.src = "";
+    };
+  }, [book?.audioLink, book?.totalDuration]);
+
   const isPreviewBook = book?.status === "selected";
   const needsSubscription = Boolean(
     book?.subscriptionRequired && !isPreviewBook
   );
+  const displayDuration = book?.totalDuration ?? resolvedDuration;
 
   const handleReadClick = () => {
     const loggedIn = localStorage.getItem("isLoggedIn") === "true";
@@ -149,7 +221,14 @@ export default function BookPage() {
       localStorage.setItem("savedBooks", JSON.stringify(updatedBooks));
       setIsSaved(false);
     } else {
-      const updatedBooks = [...savedBooks, book];
+      const enrichedBook: Book = {
+        ...book,
+        totalDuration:
+          book.totalDuration ??
+          (resolvedDuration != null ? String(Math.round(resolvedDuration)) : undefined),
+      };
+
+      const updatedBooks = [...savedBooks, enrichedBook];
 
       localStorage.setItem("savedBooks", JSON.stringify(updatedBooks));
       setIsSaved(true);
@@ -159,7 +238,12 @@ export default function BookPage() {
   if (loading) {
     return (
       <div className={`${styles.page} book`}>
-        <Sidebar onLoginClick={() => setIsModalOpen(true)} />
+        <Sidebar
+          showFontControls
+          fontSize={fontSize}
+          setFontSize={setFontSize}
+          onLoginClick={() => setIsModalOpen(true)}
+        />
 
         <main className="book__content">
           <Searchbar />
@@ -207,7 +291,12 @@ export default function BookPage() {
 
   return (
     <div className={`${styles.page} book`}>
-      <Sidebar onLoginClick={() => setIsModalOpen(true)} />
+      <Sidebar
+        showFontControls
+        fontSize={fontSize}
+        setFontSize={setFontSize}
+        onLoginClick={() => setIsModalOpen(true)}
+      />
     <main className="book__content">
       <Searchbar />
 
@@ -222,7 +311,7 @@ export default function BookPage() {
               <div>
                 ⭐ {book.averageRating} ({book.totalRating} ratings)
               </div>
-              <div>⏱ {formatDuration(book.totalDuration)} </div>
+              <div>⏱ {formatDuration(displayDuration)} </div>
               <div>🎙 Audio & Text</div>
               <div>💡 {book.keyIdeas} Key ideas</div>
             </div>
@@ -247,7 +336,14 @@ export default function BookPage() {
 
           <figure className="book__image--wrapper">
             {book.imageLink && (
-              <Image src={book.imageLink} alt={book.title} width={300} height={450} />
+              <Image
+                src={book.imageLink}
+                alt={book.title}
+                width={228}
+                height={342}
+                sizes="(max-width: 375px) 180px, 228px"
+                priority
+              />
             )}
           </figure>
         </section>
@@ -261,10 +357,24 @@ export default function BookPage() {
             ))}
           </div>
 
-          <p>{book.bookDescription}</p>
+          {getReadableParagraphs(book.bookDescription).map((paragraph, index) => (
+            <p
+              key={`description-${index}`}
+              className={`book__about-copy reader-font-target ${readerFontSizeClass}`}
+            >
+              {paragraph}
+            </p>
+          ))}
 
           <h3>About the author</h3>
-          <p>{book.authorDescription}</p>
+          {getReadableParagraphs(book.authorDescription).map((paragraph, index) => (
+            <p
+              key={`author-${index}`}
+              className={`book__about-copy reader-font-target ${readerFontSizeClass}`}
+            >
+              {paragraph}
+            </p>
+          ))}
         </section>
       </div>
     </main>

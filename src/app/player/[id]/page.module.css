@@ -5,6 +5,7 @@
   min-height: 100vh;
 }
 
+
 :global(.player__content) {
   flex: 1;
   min-width: 0;
@@ -253,25 +254,6 @@
 }
 
 @media (max-width: 768px) {
-  :global(.player .searchbar__nav) {
-    position: relative;
-    top: auto;
-    left: auto;
-    right: auto;
-    height: auto;
-    min-height: 0;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 0 0 20px;
-    background: transparent;
-    z-index: 1;
-  }
-
-  :global(.player .searchbar__search) {
-    width: min(100%, 420px);
-    max-width: 100%;
-  }
-
   :global(.player__content) {
     padding-top: 16px;
     padding-bottom: 180px;
@@ -337,12 +319,6 @@
 }
 
 @media (max-width: 400px) {
-  :global(.player .searchbar__nav) {
-    height: auto;
-    min-height: 0;
-    padding: 0 0 18px;
-  }
-
   :global(.player__content) {
     padding-top: 12px;
     padding-bottom: 160px;

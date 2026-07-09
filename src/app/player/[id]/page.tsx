@@ -12,6 +12,7 @@ import { FaCirclePlay } from "react-icons/fa6";
 import Link from "next/link";
 import { useSubscriptionStatus } from "@/app/hooks/useSubscriptionStatus";
 import { useAuthStatus } from "@/app/hooks/useAuthStatus";
+import { useReaderFontSize } from "@/app/hooks/useReaderFontSize";
 import styles from "./page.module.css";
 
 type Book = {
@@ -40,9 +41,10 @@ export default function PlayerPage() {
   const [currentTime, setCurrentTime] = useState(0);
   const [loading, setLoading] = useState(true);
   const [duration, setDuration] = useState(0);
-  const [fontSize, setFontSize] = useState(16);
   const { isPremium, isSubscriptionLoading } = useSubscriptionStatus();
   const { isLoggedIn } = useAuthStatus();
+  const { fontSize, setFontSize } = useReaderFontSize();
+  const readerFontSizeClass = `reader-font-size-${fontSize}`;
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -256,7 +258,7 @@ export default function PlayerPage() {
           <div className="player__title">
             <h1>{book.title}</h1>
 
-            <div className="player__summary">
+            <div className={`player__summary reader-font-target ${readerFontSizeClass}`}>
               {(book.summary || book.bookDescription || "")
                 .split(/\n\s*\n/)
                 .map((paragraph, index) => (
@@ -272,11 +274,6 @@ export default function PlayerPage() {
           onLoginSuccess={() => setIsModalOpen(false)}
         />
 
-        <style jsx>{`
-          .player__summary {
-            font-size: ${fontSize}px;
-          }
-        `}</style>
       </main>
 
       <div className="audio-player">

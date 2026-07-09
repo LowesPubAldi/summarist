@@ -11,6 +11,7 @@
   padding: 48px 64px;
 }
 
+
 :global(.settings__account) {
   max-width: 700px;
 }
@@ -116,20 +117,15 @@
 }
 
 @media (max-width: 800px) {
-  :global(.settings .searchbar__nav) {
-    padding: 0 0 20px;
+  :global(.settings__content) {
+    padding: 16px 20px 32px;
   }
+
 }
 
 @media (max-width: 400px) {
-  :global(.settings .searchbar__nav) {
-    justify-content: flex-start;
-    padding: 0 0 18px;
-  }
-
-  :global(.settings .searchbar__search) {
-    width: min(100%, 420px);
-    max-width: 100%;
+  :global(.settings__content) {
+    padding: 12px 16px 28px;
   }
 
   :global(.settings .sidebar__toggle) {

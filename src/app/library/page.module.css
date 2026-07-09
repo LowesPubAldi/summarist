@@ -11,6 +11,7 @@
   padding: 40px 56px;
 }
 
+
 :global(.library__nav) {
   display: flex;
   justify-content: flex-end;
@@ -218,18 +219,6 @@
     line-height: 1.35;
   }
 
-  :global(.library .searchbar__nav) {
-    min-height: 0;
-    height: auto;
-    justify-content: flex-end;
-    padding: 0 0 20px;
-  }
-
-  :global(.library .searchbar__search) {
-    width: min(100%, 420px);
-    max-width: 100%;
-  }
-}
 
 @media (max-width: 400px) {
   :global(.library__main) {
@@ -246,7 +235,4 @@
     display: none;
   }
 
-  :global(.library .searchbar__nav) {
-    padding: 0 0 18px;
-  }
 }
