@@ -215,6 +215,7 @@
 }
 
 :global(.payment-modal) {
+  position: relative;
   width: 100%;
   max-width: 420px;
   background: white;
@@ -283,7 +284,26 @@
   margin-bottom: 16px;
 }
 
+:global(.payment-modal__close) {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #6b757b;
+}
+
 @media (max-width: 768px) {
+  :global(.payment-modal) {
+    max-width: 100%;
+    padding: 28px 20px 24px;
+  }
+
   :global(.plan__features) {
     flex-direction: column;
     gap: 24px;
