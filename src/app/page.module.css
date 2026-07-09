@@ -180,7 +180,7 @@
 }
 
 :global(.statistics__content--header-second) {
-  align-items: flex-end;
+  align-items: center;
   order: 2;
 }
 
@@ -403,6 +403,27 @@
 }
 
 @media (max-width: 375px) {
+  :global(.nav__wrapper) {
+    padding: 0 16px;
+    gap: 12px;
+  }
+
+  :global(.nav__img--mask) {
+    max-width: 64px;
+    overflow: hidden;
+  }
+
+  :global(.nav__img) {
+    width: 200px;
+    height: auto;
+    display: block;
+  }
+
+  :global(.nav__list--wrapper) {
+    gap: 14px;
+    font-size: 14px;
+  }
+
   :global(.statistics__wrapper) {
     flex-direction: column;
     align-items: center;
