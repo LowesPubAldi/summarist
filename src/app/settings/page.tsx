@@ -1,25 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Image from "next/image";
+import { useState } from "react";
 import Sidebar from "@/app/components/Sidebar";
 import Searchbar from "@/app/components/Searchbar";
 import Modal from "@/app/components/Modal";
 import { useRouter } from "next/navigation";
+import { useSubscriptionStatus } from "@/app/hooks/useSubscriptionStatus";
+import styles from "./page.module.css";
 
 export default function SettingsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isPremium] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    const loggedIn = localStorage.getItem("isLoggedIn") === "true";
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsLoggedIn(loggedIn);
-  }, []);
+  const { isLoggedIn, isPremium, isSubscriptionLoading } =
+    useSubscriptionStatus();
 
   return (
-    <div className="settings">
+    <div className={`${styles.page} settings`}>
       <Sidebar onLoginClick={() => setIsModalOpen(true)} />
 
       <main className="settings__content">
@@ -31,9 +28,11 @@ export default function SettingsPage() {
           <div className="settings__account">
             <div className="settings__section">
               <h3>Your Subscription plan</h3>
-              <p>{isPremium ? "Premium" : "Basic"}</p>
+              <p>
+                {isSubscriptionLoading ? "Loading..." : isPremium ? "Premium" : "Basic"}
+              </p>
 
-              {!isPremium && (
+              {!isSubscriptionLoading && !isPremium && (
                 <button
                   className="settings__button"
                   onClick={() => router.push("/choose-plan")}
@@ -50,7 +49,7 @@ export default function SettingsPage() {
           </div>
         ) : (
           <div className="settings__logged-out">
-            <img src="/login.png" alt="" />
+            <Image src="/login.png" alt="Login illustration" width={640} height={480} />
             <h2>Log in to your account to see your details.</h2>
             <button
               className="settings__button"
@@ -65,12 +64,8 @@ export default function SettingsPage() {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onLoginSuccess={() => {
-        setIsModalOpen(false);
-        setIsLoggedIn(true);
-        window.location.reload();
-        }}
-        />
+        onLoginSuccess={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }

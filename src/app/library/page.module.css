@@ -1,0 +1,252 @@
+.page {}
+
+:global(.library) {
+  display: flex;
+  min-height: 100vh;
+}
+
+:global(.library__content) {
+  flex: 1;
+  margin-left: 20px;
+  padding: 40px 56px;
+}
+
+:global(.library__nav) {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 32px;
+}
+
+:global(.library__search) {
+  width: 280px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+:global(.library__search input) {
+  width: 100%;
+  height: 100%;
+  padding: 0 36px 0 12px;
+}
+
+:global(.library__search svg) {
+  margin-left: -28px;
+}
+
+:global(.library__main) {
+  text-align: left;
+  max-width: 900px;
+  min-height: 72vh;
+  margin-top: 40px;
+}
+
+:global(.library__main img) {
+  width: 320px;
+  margin-bottom: 32px;
+}
+
+:global(.library__main h2) {
+  font-size: 24px;
+  margin-bottom: 24px;
+}
+
+:global(.library__main button) {
+  width: 120px;
+  height: 40px;
+  background: #2bd97c;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+:global(.library__card) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+:global(.library__card img) {
+  width: 420px;
+  max-width: 100%;
+  margin-bottom: 24px;
+}
+
+:global(.library__card h2) {
+  font-size: 24px;
+  margin-bottom: 24px;
+}
+
+:global(.library__card > button) {
+  width: 140px;
+  height: 40px;
+  border: none;
+  border-radius: 4px;
+  background: #2bd97c;
+  cursor: pointer;
+}
+
+:global(.library__login-btn) {
+  width: 260px;
+  height: 48px;
+  background: #2bd97c;
+  border: none;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+:global(.library__books) {
+  width: 100%;
+}
+
+:global(.library__books section) {
+  margin-bottom: 96px;
+}
+
+:global(.library__empty) {
+  width: 360px;
+  padding: 36px 32px;
+  margin: 56px auto 88px;
+  background: #f1f6f4;
+  border-radius: 4px;
+  text-align: center;
+}
+
+:global(.library__books section:first-child) {
+  margin-bottom: 120px;
+}
+
+:global(.library__saved-books) {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 40px;
+}
+
+:global(.library__book) {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  min-width: 0;
+}
+
+:global(.library__book img) {
+  width: 100%;
+  max-width: 180px;
+  margin-bottom: 12px;
+}
+
+:global(.library__book-info) {
+  max-width: 180px;
+}
+
+:global(.library__book-info h3),
+:global(.library__book-info p) {
+  overflow-wrap: break-word;
+}
+
+:global(.library__finished-title) {
+  position: relative;
+  top: -24px;
+}
+
+:global(.library__finished-empty) {
+  text-align: center;
+  width: 360px;
+  padding: 36px 32px;
+  margin: 24px auto 88px;
+  background: #f1f6f4;
+  border-radius: 4px;
+}
+
+:global(.library__finished-empty h3) {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+:global(.library__finished-empty p) {
+  font-size: 16px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+@media (max-width: 1024px) {
+  :global(.library__book img) {
+    width: 96px;
+    height: 144px;
+  }
+}
+
+@media (max-width: 768px) {
+  :global(.library__content) {
+    margin-left: 0;
+    padding: 16px 20px 32px;
+    width: 100%;
+    overflow-x: visible;
+  }
+
+  :global(.library__main) {
+    max-width: 600px;
+    margin: 32px auto 0;
+  }
+
+  :global(.library__saved-books) {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  :global(.library__book) {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    gap: 8px;
+  }
+
+  :global(.library__book img) {
+    width: 110px;
+    height: 165px;
+  }
+
+  :global(.library__book h3) {
+    font-size: 16px;
+    line-height: 1.2;
+  }
+
+  :global(.library__book p) {
+    font-size: 14px;
+    line-height: 1.35;
+  }
+
+  :global(.library .searchbar__nav) {
+    min-height: 0;
+    height: auto;
+    justify-content: flex-end;
+    padding: 0 0 20px;
+  }
+
+  :global(.library .searchbar__search) {
+    width: min(100%, 420px);
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 400px) {
+  :global(.library__main) {
+    max-width: 100%;
+  }
+
+  :global(.library__saved-books) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  :global(.library__saved-books .library__book:nth-child(n + 3)) {
+    display: none;
+  }
+
+  :global(.library .searchbar__nav) {
+    padding: 0 0 18px;
+  }
+}

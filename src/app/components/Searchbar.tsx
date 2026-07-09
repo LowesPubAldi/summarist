@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { HiOutlineSearch, HiOutlineX } from "react-icons/hi";
 import { useRouter } from "next/navigation";
@@ -108,7 +109,7 @@ export default function Searchbar() {
                 onClick={() => handleBookClick(book.id)}
               >
                 {book.imageLink && (
-                  <img src={book.imageLink} alt={book.title} />
+                  <Image src={book.imageLink} alt={book.title} width={48} height={72} />
                 )}
 
                 <div>

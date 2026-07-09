@@ -1,10 +1,14 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Sidebar from "@/app/components/Sidebar";
 import Searchbar from "@/app/components/Searchbar";
 import Modal from "@/app/components/Modal";
+import { formatDuration } from "@/app/utils/formatDuration";
+import { useAuthStatus } from "@/app/hooks/useAuthStatus";
+import styles from "./page.module.css";
 
 type Book = {
   id: string;
@@ -27,30 +31,16 @@ type Book = {
 
 export default function LibraryPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [savedBooks, setSavedBooks] = useState<Book[]>([]);
+  const { isLoggedIn } = useAuthStatus();
 
   useEffect(() => {
-    const loggedIn = localStorage.getItem("isLoggedIn") === "true";
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsLoggedIn(loggedIn);
-
-    const books = JSON.parse(localStorage.getItem("savedBooks") || "[]");
-    setSavedBooks(books);
+    setSavedBooks(JSON.parse(localStorage.getItem("savedBooks") || "[]"));
   }, []);
 
-  const handleModalClose = () => {
-  setIsModalOpen(false);
-
-  const loggedIn = localStorage.getItem("isLoggedIn") === "true";
-  setIsLoggedIn(loggedIn);
-
-  const books = JSON.parse(localStorage.getItem("savedBooks") || "[]");
-  setSavedBooks(books);
-};
-
   return (
-    <div className="library">
+    <div className={`${styles.page} library`}>
       <Sidebar onLoginClick={() => setIsModalOpen(true)} />
 
       <main className="library__content">
@@ -71,7 +61,9 @@ export default function LibraryPage() {
                         className="library__book"
                         key={book.id}
                       >
-                        <img src={book.imageLink} alt={book.title} />
+                        {book.imageLink && (
+                          <Image src={book.imageLink} alt={book.title} width={180} height={270} />
+                        )}
 
                         <div className="library__book-info">
                             <h3>{book.title}</h3>
@@ -83,7 +75,7 @@ export default function LibraryPage() {
                           </p>
 
                           <p className="library__duration">
-                            ⏱ {book.totalDuration}
+                            ⏱ {formatDuration(book.totalDuration)}
                           </p>
 
                           <p className="library__subtitle">
@@ -118,7 +110,7 @@ export default function LibraryPage() {
             </div>
           ) : (
             <div className="library__card">
-              <img src="/login.png" alt="" />
+              <Image src="/login.png" alt="" width={420} height={320} />
               <h2>Log in to your account to see your library.</h2>
               <button onClick={() => setIsModalOpen(true)}>Login</button>
             </div>
@@ -131,12 +123,9 @@ export default function LibraryPage() {
         onClose={() => setIsModalOpen(false)}
         onLoginSuccess={() => {
           setIsModalOpen(false);
-          setIsLoggedIn(true);
 
-        const books = JSON.parse(localStorage.getItem("savedBooks") || "[]");
-        setSavedBooks(books);
-
-        window.location.reload();
+          const books = JSON.parse(localStorage.getItem("savedBooks") || "[]");
+          setSavedBooks(books);
         }}
         />
     </div>

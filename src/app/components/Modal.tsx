@@ -1,8 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FaUserAlt } from "react-icons/fa"
+import { emitAuthChange } from "@/app/hooks/useAuthStatus";
 
 type ModalProps = {
   isOpen: boolean;
@@ -27,6 +29,7 @@ export default function Modal({
     setError("");
     localStorage.setItem("isLoggedIn", "true");
     localStorage.setItem("isGuest", "true");
+    emitAuthChange();
     onClose();
 
     if (onLoginSuccess) {
@@ -77,7 +80,7 @@ export default function Modal({
             setError("Google login is not available in this demo")
           }
         >
-          <img src="/google.png" alt="Google" className="modal__google-icon" />
+          <Image src="/google.png" alt="Google" className="modal__google-icon" width={24} height={24} />
           Login with Google
         </button>
 

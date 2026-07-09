@@ -1,11 +1,14 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import Sidebar from "@/app/components/Sidebar";
 import Searchbar from "@/app/components/Searchbar";
 import Modal from "@/app/components/Modal";
 import { IoPlayCircle } from "react-icons/io5";
 import Link from "next/link";
+import { formatDuration } from "@/app/utils/formatDuration";
+import styles from "./page.module.css";
 
 type Book = {
   id: string;
@@ -32,16 +35,12 @@ export default function ForYouPage() {
   const [recommendedBooks, setRecommendedBooks] = useState<Book[]>([]);
   const [suggestedBooks, setSuggestedBooks] = useState<Book[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function getBooks() {
       try {
         setLoading(true);
-
-        const loggedIn = localStorage.getItem("isLoggedIn") === "true";
-        setIsLoggedIn(loggedIn);
 
         const [selectedResponse, recommendedResponse, suggestedResponse] =
           await Promise.all([
@@ -143,12 +142,14 @@ export default function ForYouPage() {
           <h2>Selected just for you</h2>
 
           {selectedBook && (
-            <Link href={`/book/${selectedBook.id}`} className="selected-book">
+                <Link href={`/book/${selectedBook.id}`} className={`${styles.page} selected-book`}>
               <div className="selected-book__text">
                 <p>{selectedBook.subTitle}</p>
               </div>
 
-              <img src={selectedBook.imageLink} alt={selectedBook.title} />
+              {selectedBook.imageLink && (
+                <Image src={selectedBook.imageLink} alt={selectedBook.title} width={140} height={210} />
+              )}
 
               <div className="selected-book__info">
                 <h3>{selectedBook.title}</h3>
@@ -156,7 +157,7 @@ export default function ForYouPage() {
 
                 <div className="selected-book__time">
                   <IoPlayCircle className="selected-book__play" />
-                  <span>3 mins 23 secs</span>
+                  <span>{formatDuration(selectedBook.totalDuration)}</span>
                 </div>
               </div>
             </Link>
@@ -174,7 +175,9 @@ export default function ForYouPage() {
                   <span className="book-pill">Premium</span>
                 )}
 
-                <img src={book.imageLink} alt={book.title} />
+                {book.imageLink && (
+                  <Image src={book.imageLink} alt={book.title} width={140} height={200} />
+                )}
                 <h3>{book.title}</h3>
                 <p>{book.author}</p>
                 <p>{book.subTitle}</p>
@@ -197,7 +200,9 @@ export default function ForYouPage() {
                   <span className="book-pill">Premium</span>
                 )}
 
-                <img src={book.imageLink} alt={book.title} />
+                {book.imageLink && (
+                  <Image src={book.imageLink} alt={book.title} width={140} height={200} />
+                )}
                 <h3>{book.title}</h3>
                 <p>{book.author}</p>
                 <p>{book.subTitle}</p>
@@ -214,11 +219,7 @@ export default function ForYouPage() {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onLoginSuccess={() => {
-          setIsModalOpen(false);
-          setIsLoggedIn(true);
-          window.location.reload();
-        }}
+        onLoginSuccess={() => setIsModalOpen(false)}
       />
     </div>
   );

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Sidebar from "@/app/components/Sidebar";
 import Searchbar from "@/app/components/Searchbar";
 import Modal from "@/app/components/Modal";
@@ -7,6 +8,10 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 import { IoBookOutline, IoPlayOutline } from "react-icons/io5";
+import { useSubscriptionStatus } from "@/app/hooks/useSubscriptionStatus";
+import { formatDuration } from "@/app/utils/formatDuration";
+import { useAuthStatus } from "@/app/hooks/useAuthStatus";
+import styles from "./page.module.css";
 
 type Book = {
   id: string;
@@ -30,20 +35,14 @@ type Book = {
 export default function BookPage() {
   const [book, setBook] = useState<Book | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [loading, setLoading] = useState(true);
+  const { isPremium, isSubscriptionLoading } = useSubscriptionStatus();
+  const { isLoggedIn } = useAuthStatus();
 
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
-
-  useEffect(() => {
-    const loggedIn = localStorage.getItem("isLoggedIn") === "true";
-
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsLoggedIn(loggedIn);
-  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -81,41 +80,50 @@ export default function BookPage() {
     fetchData();
   }, [id]);
 
+  const isPreviewBook = book?.status === "selected";
+  const needsSubscription = Boolean(
+    book?.subscriptionRequired && !isPreviewBook
+  );
+
   const handleReadClick = () => {
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    const loggedIn = localStorage.getItem("isLoggedIn") === "true";
 
-  if (!isLoggedIn) {
-    setIsModalOpen(true);
-    return;
-  }
+    if (!loggedIn) {
+      setIsModalOpen(true);
+      return;
+    }
 
-  const isPreviewBook = book?.status === "selected";
+    if (needsSubscription && isSubscriptionLoading) {
+      return;
+    }
 
-  if (book?.subscriptionRequired && !isPreviewBook) {
-    router.push("/choose-plan");
-    return;
-  }
+    if (needsSubscription && !isPremium) {
+      router.push("/choose-plan");
+      return;
+    }
 
-  router.push(`/player/${id}`);
-};
+    router.push(`/player/${id}`);
+  };
 
-const handleListenClick = () => {
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  const handleListenClick = () => {
+    const loggedIn = localStorage.getItem("isLoggedIn") === "true";
 
-  if (!isLoggedIn) {
-    setIsModalOpen(true);
-    return;
-  }
+    if (!loggedIn) {
+      setIsModalOpen(true);
+      return;
+    }
 
-  const isPreviewBook = book?.status === "selected";
+    if (needsSubscription && isSubscriptionLoading) {
+      return;
+    }
 
-  if (book?.subscriptionRequired && !isPreviewBook) {
-    router.push("/choose-plan");
-    return;
-  }
+    if (needsSubscription && !isPremium) {
+      router.push("/choose-plan");
+      return;
+    }
 
-  router.push(`/player/${id}`);
-};
+    router.push(`/player/${id}`);
+  };
 
   const handleLibraryClick = () => {
     if (!isLoggedIn) {
@@ -150,7 +158,7 @@ const handleListenClick = () => {
 
   if (loading) {
     return (
-      <div className="book">
+      <div className={`${styles.page} book`}>
         <Sidebar onLoginClick={() => setIsModalOpen(true)} />
 
         <main className="book__content">
@@ -198,7 +206,7 @@ const handleListenClick = () => {
   }
 
   return (
-    <div className="book">
+    <div className={`${styles.page} book`}>
       <Sidebar onLoginClick={() => setIsModalOpen(true)} />
     <main className="book__content">
       <Searchbar />
@@ -214,7 +222,7 @@ const handleListenClick = () => {
               <div>
                 ⭐ {book.averageRating} ({book.totalRating} ratings)
               </div>
-              <div>⏱ {book.totalDuration} </div>
+              <div>⏱ {formatDuration(book.totalDuration)} </div>
               <div>🎙 Audio & Text</div>
               <div>💡 {book.keyIdeas} Key ideas</div>
             </div>
@@ -238,7 +246,9 @@ const handleListenClick = () => {
           </div>
 
           <figure className="book__image--wrapper">
-            <img src={book.imageLink} alt={book.title} />
+            {book.imageLink && (
+              <Image src={book.imageLink} alt={book.title} width={300} height={450} />
+            )}
           </figure>
         </section>
 
@@ -262,11 +272,7 @@ const handleListenClick = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onLoginSuccess={() => {
-          setIsModalOpen(false);
-          setIsLoggedIn(true);
-          window.location.reload();
-        }}
+        onLoginSuccess={() => setIsModalOpen(false)}
       />
     </div>
   );

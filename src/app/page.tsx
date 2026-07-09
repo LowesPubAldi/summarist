@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image";
 import {
   HiDocumentText,
   HiLightBulb,
@@ -12,23 +13,9 @@ import { FaStarHalfAlt } from "react-icons/fa";
 import { FaCrown } from "react-icons/fa6";
 import { useEffect, useState } from "react";
 import Modal from "./components/Modal";
+import styles from "./page.module.css";
 
-
-export default function Home () {
-  const [activeIndex, setActiveIndex] = useState(0);
-
-useEffect(() => {
-  const interval = setInterval(() => {
-    setActiveIndex((prevIndex) =>
-      prevIndex === firstStats.length - 1 ? 0 : prevIndex + 1
-    );
-  }, 2000);
-
-  return () => clearInterval(interval);
-}, []);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const firstStats = [
+const firstStats = [
   "Enhance your knowledge",
   "Achieve greater success",
   "Improve your health",
@@ -46,12 +33,28 @@ const secondStats = [
   "Maximize your abilities",
 ];
 
+
+export default function Home () {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+useEffect(() => {
+  const interval = setInterval(() => {
+    setActiveIndex((prevIndex) =>
+      prevIndex === firstStats.length - 1 ? 0 : prevIndex + 1
+    );
+  }, 2000);
+
+  return () => clearInterval(interval);
+}, []);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
-    <div>
+    <div className={styles.page}>
         <nav className="nav">
       <div className="nav__wrapper">
         <figure className="nav__img--mask">
-          <img className="nav__img" src="/logo.png" alt="logo" />
+          <Image className="nav__img" src="/logo.png" alt="Summarist" width={180} height={40} priority />
         </figure>
         <ul className="nav__list--wrapper">
           <li 
@@ -94,7 +97,7 @@ const secondStats = [
               </button>
             </div>
             <figure className="landing__image--mask">
-              <img src="/landing.png" alt="landing" />
+              <Image src="/landing.png" alt="Landing illustration" width={420} height={520} priority />
             </figure>
           </div>
         </div>

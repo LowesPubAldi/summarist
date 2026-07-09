@@ -1,12 +1,14 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { initFirebase } from "../firebase";
-import { useRouter } from "next/navigation"
+import { useRouter } from "next/navigation";
 import { FaChevronCircleDown, FaChevronCircleUp } from "react-icons/fa";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import PaymentModal from "../components/PaymentModal";
 import { getCheckoutUrl } from "./stripePayment";
+import styles from "./page.module.css";
 
 const faqs = [
   {
@@ -33,58 +35,51 @@ const faqs = [
 ];
 
 export default function ChoosePlanPage() {
-    const [openFaq, setOpenFaq] = useState(0);
-    const [selectedPlan, setSelectedPlan] = useState("yearly");
-    const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [openFaq, setOpenFaq] = useState(0);
+  const [selectedPlan, setSelectedPlan] = useState("yearly");
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
-    const router = useRouter();
+  const router = useRouter();
 
-    const app = initFirebase();
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
+  const app = initFirebase();
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
 
-    const yearlyPriceId = "price_1TkcG5FRRyhPU4nPN7nxBiWf";
-    const monthlyPriceId = "price_1TkcF3FRRyhPU4nPP03MgsqT";
+  const yearlyPriceId = "price_1TkcG5FRRyhPU4nPN7nxBiWf";
+  const monthlyPriceId = "price_1TkcF3FRRyhPU4nPP03MgsqT";
 
-    const upgradeToPremium = async () => {
-      let user = auth.currentUser;
+  const upgradeToPremium = async () => {
+    let user = auth.currentUser;
 
     if (!user) {
       const result = await signInWithPopup(auth, provider);
       user = result.user;
     }
 
-    const priceId =
-      selectedPlan === "monthly" ? monthlyPriceId : yearlyPriceId;
+    const priceId = selectedPlan === "monthly" ? monthlyPriceId : yearlyPriceId;
 
     const checkoutUrl = await getCheckoutUrl(app, priceId);
-      window.location.href = checkoutUrl;
-};
+    window.location.href = checkoutUrl;
+  };
 
-    const backToHome = () => {
-      router.push("/for-you");
-};
-
-    const goToAccount = () => {
-      router.push("/settings");
-      };
-
-    const signIn = async () => {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-
-    if (user) {  
-      router.push("/choose-plan");
-      }
-    };
+  const backToHome = () => {
+    router.push("/for-you");
+  };
 
     return (
-    <main className="plan">
+    <main className={`${styles.page} plan`}>
       <section className="plan__hero">
         <h1>Get unlimited access to many amazing books to read</h1>
         <p>Turn ordinary moments into amazing learning opportunities</p>
 
-        <img src="/pricing-top.png" alt="" />
+        <Image
+          src="/pricing-top.png"
+          alt="Pricing illustration"
+          width={1200}
+          height={540}
+          priority
+          className="plan__hero-image"
+        />
       </section>
 
       <section className="plan__features">
@@ -264,8 +259,8 @@ export default function ChoosePlanPage() {
           onClose={() => setIsPaymentModalOpen(false)}
           selectedPlan={selectedPlan}
           onContinue={upgradeToPremium}
-          onBackHome={() => router.push("/for-you")}
-          />
+          onBackHome={backToHome}
+        />
       </div>
     </section>
     </main>

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import Modal from "../../components/Modal";
@@ -8,6 +9,10 @@ import Searchbar from "@/app/components/Searchbar";
 import { MdReplay10, MdForward10 } from "react-icons/md";
 import { FaPause } from "react-icons/fa";
 import { FaCirclePlay } from "react-icons/fa6";
+import Link from "next/link";
+import { useSubscriptionStatus } from "@/app/hooks/useSubscriptionStatus";
+import { useAuthStatus } from "@/app/hooks/useAuthStatus";
+import styles from "./page.module.css";
 
 type Book = {
   id: string;
@@ -30,25 +35,19 @@ type Book = {
 
 export default function PlayerPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [book, setBook] = useState<Book | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [loading, setLoading] = useState(true);
   const [duration, setDuration] = useState(0);
   const [fontSize, setFontSize] = useState(16);
+  const { isPremium, isSubscriptionLoading } = useSubscriptionStatus();
+  const { isLoggedIn } = useAuthStatus();
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const params = useParams();
   const id = params.id as string;
-
-  useEffect(() => {
-    const loggedIn = localStorage.getItem("isLoggedIn") === "true";
-
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsLoggedIn(loggedIn);
-  }, []);
 
   useEffect(() => {
     async function fetchBook() {
@@ -74,6 +73,11 @@ export default function PlayerPage() {
 
     fetchBook();
   }, [id]);
+
+  const isPreviewBook = book?.status === "selected";
+  const needsSubscription = Boolean(
+    book?.subscriptionRequired && !isPreviewBook
+  );
 
   const formatTime = (time: number) => {
     if (!time || Number.isNaN(time)) {
@@ -120,7 +124,7 @@ export default function PlayerPage() {
 
   if (loading) {
     return (
-      <div className="player">
+      <div className={`${styles.page} player`}>
         <Sidebar
           showFontControls
           fontSize={fontSize}
@@ -171,8 +175,63 @@ export default function PlayerPage() {
     return null;
   }
 
+  if (isLoggedIn && needsSubscription && isSubscriptionLoading) {
+    return (
+      <div className={`${styles.page} player`}>
+        <Sidebar
+          showFontControls
+          fontSize={fontSize}
+          setFontSize={setFontSize}
+          onLoginClick={() => setIsModalOpen(true)}
+        />
+
+        <main className="player__content">
+          <Searchbar />
+
+          <div className="player__title">
+            <h2>Checking your subscription</h2>
+            <p>We are verifying access to this title.</p>
+          </div>
+        </main>
+
+        <div className="audio-player" />
+      </div>
+    );
+  }
+
+  if (isLoggedIn && needsSubscription && !isPremium) {
+    return (
+      <div className={`${styles.page} player`}>
+        <Sidebar
+          showFontControls
+          fontSize={fontSize}
+          setFontSize={setFontSize}
+          onLoginClick={() => setIsModalOpen(true)}
+        />
+
+        <main className="player__content">
+          <Searchbar />
+
+          <div className="player__title">
+            <Image src="/login.png" alt="" width={400} height={300} />
+
+            <h2>This book needs a Premium subscription</h2>
+
+            <p>Upgrade to unlock the full audio and summary.</p>
+
+            <Link href="/choose-plan" className="plan__trial-btn">
+              Go to Choose Plan
+            </Link>
+          </div>
+        </main>
+
+        <div className="audio-player" />
+      </div>
+    );
+  }
+
   return (
-    <div className="player">
+    <div className={`${styles.page} player`}>
       <Sidebar
         showFontControls
         fontSize={fontSize}
@@ -185,7 +244,7 @@ export default function PlayerPage() {
 
         {!isLoggedIn ? (
           <div className="player__title">
-            <img src="/login.png" alt="" />
+            <Image src="/login.png" alt="" width={400} height={300} />
 
             <h2>Log in to your account to read and listen to the book</h2>
 
@@ -210,11 +269,7 @@ export default function PlayerPage() {
         <Modal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          onLoginSuccess={() => {
-            setIsModalOpen(false);
-            setIsLoggedIn(true);
-            window.location.reload();
-          }}
+          onLoginSuccess={() => setIsModalOpen(false)}
         />
 
         <style jsx>{`
@@ -240,7 +295,9 @@ export default function PlayerPage() {
         />
 
         <div className="audio-player__book">
-          <img src={book.imageLink} alt={book.title} />
+          {book.imageLink && (
+            <Image src={book.imageLink} alt={book.title} width={48} height={64} />
+          )}
 
           <div>
             <h4>{book.title}</h4>

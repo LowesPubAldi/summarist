@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import {
   HiOutlineHome,
   HiOutlineBookmark,
@@ -13,8 +14,8 @@ import {
   HiX,
 } from "react-icons/hi";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { emitAuthChange, useAuthStatus } from "@/app/hooks/useAuthStatus";
 
 type SidebarProps = {
   showFontControls?: boolean;
@@ -29,20 +30,14 @@ export default function Sidebar({
   fontSize,
   setFontSize,
 }: SidebarProps) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSidebarOpen, setIsSiderOpen] = useState(false);
-  const router = useRouter();
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsLoggedIn(localStorage.getItem("isLoggedIn") === "true");
-  }, []);
+  const { isLoggedIn } = useAuthStatus();
 
   const handleAuthClick = () => {
     if (isLoggedIn) {
       localStorage.removeItem("isLoggedIn");
-      setIsLoggedIn(false);
-      window.location.reload();
+      localStorage.removeItem("isGuest");
+      emitAuthChange();
       return;
     }
 
@@ -69,7 +64,7 @@ export default function Sidebar({
       <aside className={`sidebar ${isSidebarOpen ? "sidebar--open" : ""}`}>
 
       <div className="sidebar__logo">
-        <img src="/logo.png" alt="Summarist" />
+        <Image src="/logo.png" alt="Summarist" width={160} height={36} />
       </div>
 
       <ul className="sidebar__menu">
@@ -130,7 +125,7 @@ export default function Sidebar({
       </div>
 )}
 
-      <ul className="sidebar__menu">
+      <ul className="sidebar__menu sidebar__menu--secondary">
         <li>
           <Link href="/settings">
             <HiOutlineCog />

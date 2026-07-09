@@ -20,6 +20,18 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Project Notes
+
+- Shared app-wide resets, layout primitives, and sidebar/navigation styles live in `src/app/globals.css`.
+- Route-specific styling has been moved into CSS modules under `src/app/**/page.module.css`.
+- Auth and subscription state are centralized through shared hooks in `src/app/hooks`.
+
+## Portfolio Notes
+
+- This is a polished demo built around the public Summarist API, Firebase auth, and the Stripe extension checkout/portal flow.
+- A few flows are intentionally simplified for presentation, including guest-style auth state and demo-only fallback messaging.
+- The point of the project is to show clean routing, real data fetching, a real checkout path, and a maintainable CSS architecture rather than a custom backend.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

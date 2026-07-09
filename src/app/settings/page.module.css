@@ -1,0 +1,139 @@
+.page {}
+
+:global(.settings) {
+  display: flex;
+  min-height: 100vh;
+  background: #f7faf9;
+}
+
+:global(.settings__content) {
+  flex: 1;
+  padding: 48px 64px;
+}
+
+:global(.settings__account) {
+  max-width: 700px;
+}
+
+:global(.settings__content h1) {
+  font-size: 32px;
+  margin-bottom: 48px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 24px;
+}
+
+:global(.settings__nav) {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 64px;
+}
+
+:global(.settings__search) {
+  width: 320px;
+  height: 40px;
+  border-bottom: 1px solid #e1e7ea;
+  display: flex;
+  align-items: center;
+}
+
+:global(.settings__search input) {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+}
+
+:global(.settings__main) {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+:global(.settings__main h1) {
+  font-size: 32px;
+  margin-bottom: 32px;
+}
+
+:global(.settings__card) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 64px;
+  text-align: center;
+}
+
+:global(.settings__card button) {
+  width: 120px;
+  height: 40px;
+  background: #2bd97c;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+:global(.settings__section) {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 32px 0;
+}
+
+:global(.settings__section h3) {
+  font-size: 18px;
+  margin-bottom: 12px;
+  color: #032b41;
+}
+
+:global(.settings__section p) {
+  font-size: 16px;
+  color: #394547;
+}
+
+:global(.settings__button) {
+  background: #2bd97c;
+  color: blue;
+  border-radius: 4px;
+  padding: 12px 24px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 16px;
+}
+
+:global(.settings__logged-out) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 55vh;
+  text-align: center;
+}
+
+:global(.settings__logged-out h2) {
+  margin-bottom: 24px;
+}
+
+:global(.settings__logged-out img) {
+  width: 400px;
+  margin-bottom: 32px;
+}
+
+@media (max-width: 800px) {
+  :global(.settings .searchbar__nav) {
+    padding: 0 0 20px;
+  }
+}
+
+@media (max-width: 400px) {
+  :global(.settings .searchbar__nav) {
+    justify-content: flex-start;
+    padding: 0 0 18px;
+  }
+
+  :global(.settings .searchbar__search) {
+    width: min(100%, 420px);
+    max-width: 100%;
+  }
+
+  :global(.settings .sidebar__toggle) {
+    right: 8px;
+    top: 18px;
+  }
+}
